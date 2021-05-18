@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!--
+用法：
+插值指令主要作用是将值插入到我们模板的内容当中。除了内容需要动态来决定外，某些属性我们也希望动态来绑定。
+动态地绑定一个或多个 attribute，或一个组件 prop 到表达式。在绑定 class 或 style attribute 时，支持其它类型的值，如数组或对象。
+
+1. v-bind的基本使用
+2. v-bind动态绑定class（对象）
+      用法一：直接通过{}绑定一个类
+      <h2 :class="{'active': isActive}">Hello World</h2>
+
+      用法二：也可以通过判断，传入多个值
+      <h2 :class="{'active': isActive, 'line': isLine}">Hello World</h2>
+
+      用法三：和普通的类同时存在，并不冲突，重复不覆盖
+      注：如果isActive和isLine都为true，那么会有title/active/line三个类
+      <h2 class="title" :class="{'active': isActive, 'line': isLine}">Hello World</h2>
+
+      用法四：如果过于复杂，可以放在一个methods或者computed中
+      注：classes是一个计算属性
+      <h2 class="title" :class="classes">Hello World</h2>
+
+3. v-bind动态绑定class（数组）
+      用法一：直接通过{}绑定一个类
+      <h2 :class="['active']">Hello World</h2>
+
+      用法二：也可以传入多个值
+      <h2 :class="['active', 'line']">Hello World</h2>
+
+      用法三：和普通的类同时存在，并不冲突，重复不覆盖
+      注：会有title/active/line三个类
+      <h2 class="title" :class="['active', 'line']">Hello World</h2>
+
+      用法四：数组中可以使用变量名，类名取变量值
+      <h2 class="title" :class="[Active, Line]">Hello World</h2>
+
+      用法五：如果过于复杂，可以放在一个methods或者computed中
+      注：classes是一个计算属性
+      <h2 class="title" :class="classes">Hello World</h2>
+
+4. v-bind动态绑定style（对象）
+5. v-bind动态绑定style（数组）
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .active{
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>1. v-bind的基本使用</h1>
+  <div id="bind_base_app">
+    <!--普通写法-->
+    <img v-bind:src="img" alt="vue.logo">
+    <a v-bind:href="url">百度</a>
+    <!--语法糖（简写标签）写法-->
+    <img :src="img" alt="vue.logo">
+    <a :href="url">百度</a>
+  </div>
+  <hr>
+
+  <h1>2. v-bind动态绑定class（对象）</h1>
+  <div id="bind_class_obj">
+    <p class="default" :class="{active:isActive, line:isLine}">{{msg}}</p>
+    <p class="default" :class="getClass()">{{msg}} ...</p><!--普通方法不能省略()，事件方法可以省略()-->
+    <button v-on:click="changeActive">切换Active</button>
+  </div>
+  <hr>
+
+  <h1>3. v-bind动态绑定class（数组）</h1>
+  <div id="bind_class_array">
+    <p class="default active" :class="['active', 'line']">{{msg}}  1</p>
+    <p class="default ActiveClass" :class="[Active, Line]">{{msg}}  2</p>
+  </div>
+  <hr>
+</body>
+</html>
+
+
+<script src="js/vue.js"></script>
+<script>
+  const bind_base_app = new Vue({
+    el: "#bind_base_app",
+    data: {
+      img: "https://vuejs.bootcss.com/images/logo.png",
+      url: "http://www.baidu.com/",
+    }
+  })
+
+  const bind_class_obj = new Vue({
+    el: "#bind_class_obj",
+    data: {
+      msg: "hello v-bind class obj",
+      isActive: true,
+      isLine: true,
+    },
+    methods: {
+      changeActive: function(){
+        this.isActive = !this.isActive;
+      },
+      getClass: function(){
+        return {active:this.isActive, line:this.isLine}
+      }
+    },
+  })
+
+  const bind_class_array = new Vue({
+    el: "#bind_class_array",
+    data: {
+      msg: "hello v-bind class array",
+      Active: "ActiveClass",
+      Line: "LineClass",
+    }
+  })
+</script>
