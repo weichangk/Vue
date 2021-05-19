@@ -39,7 +39,13 @@
       <h2 class="title" :class="classes">Hello World</h2>
 
 4. v-bind动态绑定style（对象）
+      :style="{color: currentColor, fontSize: fontSize + 'px'}"
+      style后面跟的是一个对象类型，对象的key是CSS属性名称，对象的value是具体赋的值，值可以来自于data中的属性
+
 5. v-bind动态绑定style（数组）
+      <div v-bind:style="[baseStyles, overridingStyles]"></div>
+      style后面跟的是一个数组类型，多个值以，分割即可
+
 -->
 <html lang="en">
 <head>
@@ -79,6 +85,21 @@
     <p class="default ActiveClass" :class="[Active, Line]">{{msg}}  2</p>
   </div>
   <hr>
+
+  <h1>4. v-bind动态绑定style（对象）</h1>
+  <div id="bind_style_obj">
+    <p :style="{fontSize:'50px', color:'red'}">{{msg}}</p>
+    <p :style="{fontSize:fontSizeValue + 'px', color:colorValue}">{{msg}}</p>
+    <p :style="getStyle()">{{msg}}</p>
+    <button @click="addFontSize">增大字体</button>
+  </div>
+  <hr>
+
+  <h1>5. v-bind动态绑定style（数组）</h1>
+  <div id="bind_style_array">
+    <p :style="[baseFontSize, baseBackgroundColor]">{{msg}}</p>
+  </div>
+  <hr>
 </body>
 </html>
 
@@ -116,6 +137,32 @@
       msg: "hello v-bind class array",
       Active: "ActiveClass",
       Line: "LineClass",
+    }
+  })
+
+  const bind_style_obj = new Vue({
+    el: "#bind_style_obj",
+    data: {
+      msg: "hello v-bind style obj",
+      fontSizeValue: 30,
+      colorValue: "yellow",
+    },
+    methods: {
+      addFontSize: function(){
+        this.fontSizeValue += 10;
+      },
+      getStyle: function(){
+        return {fontSize: this.fontSizeValue + 'px', color: this.colorValue}
+      }
+    }
+  })
+
+  const bind_style_array = new Vue({
+    el: "#bind_style_array",
+    data: {
+      msg: "hello v-bind style array",
+      baseFontSize: {fontSize: "60px"},
+      baseBackgroundColor: {backgroundColor: "red"},
     }
   })
 </script>
