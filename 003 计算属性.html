@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--
+1. 计算属性得基本用法
+    在某些情况，我们可能需要对数据进行一些转化后再显示，或者需要将多个数据结合起来进行显示，可以使用计算属性。computed中定义属于。
+
+2. 计算属性的复杂用法
+
+3. 计算属性setter和getter
+    每个计算属性都包含一个getter和一个setter。使用getter来读取，使用setter来赋值，一般不用setter为只读属性。
+
+4. 计算属性computed和方法methods的区别
+    methods和computed看起来都可以实现我们的功能，那么为什么还要多一个计算属性这个东西呢？
+    原因：计算属性会进行缓存，如果多次使用时，计算属性只会调用一次。
+    计算属性调用时不需要夹小括号。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>1. 计算属性得基本用法</h1>
+  <div id="computedBase">
+    <p>{{fullName}}</p>
+  </div>
+  <hr>
+
+  <h1>2. 计算属性的复杂用法</h1>
+  <div id="computedComplex">
+    <p>{{totalPrice}}</p>
+  </div>
+  <hr>
+
+  <h1>3. 计算属性setter和getter</h1>
+  <div id="computedGetOrSet">
+    <p>{{fullName}}</p>
+  </div>
+  <hr>
+
+  <h1>4. 计算属性computed和方法methods的区别</h1>
+  <div id="computedOrmethods">
+    <p>{{fullName}}</p>
+    <p>{{fullName}}</p>
+    <p>{{getFullName()}}</p>
+    <p>{{getFullName()}}</p>
+  </div>
+  <hr>
+
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  const computedBase = new Vue({
+    el: "#computedBase",
+    data: {
+      firstName: "weichangk",
+      lastName: "developer"
+    },
+    computed: {
+      fullName: function(){
+        return this.firstName + this.lastName;
+      }
+    }
+  })
+
+  const computedComplex = new Vue({
+    el: "#computedComplex",
+    data: {
+      books: [
+        {id: 1, name: "html css", price: 10},
+        {id: 2, name: "javascript", price: 20},
+        {id: 3, name: "jQuery", price: 30},
+        {id: 4, name: "Vue", price: 40},
+      ]
+    },
+    computed: {
+      totalPrice: function(){
+        let result = 0;
+        for(let book of this.books)
+        {
+          result += book.price;
+        }
+        return result;
+      }
+    }
+  })
+
+  const computedGetOrSet = new Vue({
+    el: "#computedGetOrSet",
+    data: {
+      firstName: "weichangk",
+      lastName: "developer",
+    },
+    computed: {
+      fullName: {
+        set: function(value){
+          console.log(".......");
+        },
+        get: function(){
+          return this.firstName + this.lastName;
+        }
+      }
+    }
+  })
+
+  const computedOrmethods = new Vue({
+    el: "#computedOrmethods",
+    data: {
+      firstName: "weichangk",
+      lastName: "developer",     
+    },
+    computed: {
+      fullName: {
+        get: function(){
+          console.log("computed...");//不管多次调用只执行一次（缓存，提高性能），计算属性发生变化会重新执行。
+          return "computed:" + this.firstName + this.lastName;
+        }
+      }
+    },
+    methods: {
+      getFullName: function(){
+        console.log("methods...");//每次次调用都会执行
+        return "methods:" + this.firstName + this.lastName;
+      }
+    },
+  })
+</script>
