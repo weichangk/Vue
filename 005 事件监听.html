@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+v-on介绍
+作用：绑定事件监听器
+缩写：@
+预期：Function | Inline Statement | Object
+参数：event
+
+1. v-on的基本使用
+
+2. v-on参数问题
+    当通过methods中定义方法，以供@click调用时，需要注意参数问题
+    情况一：如果该方法不需要额外参数，那么方法后的()可以不添加，但是注意：如果方法本身中有一个参数，那么会默认将原生事件event参数传递进去
+    情况二：如果需要同时传入某个参数，同时需要event时，可以通过$event传入事件
+
+3. v-on修饰符
+    在某些情况下，我们拿到event的目的可能是进行一些事件处理。Vue提供了修饰符来帮助我们方便的处理一些事件：
+      .stop - 调用 event.stopPropagation()。
+      .prevent - 调用 event.preventDefault()。
+      .{keyCode | keyAlias} - 只当事件是从特定键触发时才触发回调。
+      .native - 监听组件根元素的原生事件。
+      .once - 只触发一次回调。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>1. v-on的基本使用</h1>
+  <div id="v_on_base">
+    <h2>{{count}}</h2>
+    <button v-on:click = "count ++">+</button>
+    <button v-on:click = "count --">-</button>
+    <button @click = "add()">+</button>
+    <button @click = "sub()">-</button>
+  </div>
+
+  <hr>
+
+  <h1>2. v-on参数问题</h1>
+  <div id="v_on_param">
+    <!--2.1.事件调用的方法没有参数-->
+    <button @click="btn1Click()">按钮1</button>
+    <button @click="btn1Click">按钮11</button>
+
+    <!--2.2.在事件定义时, 方法本身是需要一个参数。-->
+    <button @click="btn2Click(123)">按钮2</button>
+    <button @click="btn2Click()">按钮22</button> <!--有括号不传参数则函数形参为undefined-->
+    <button @click="btn2Click">按钮222</button> <!--无括号时Vue会默认将浏览器生产的event事件对象作为参数传入到方法-->
+
+    <!--2.3.方法定义时, 我们需要event对象, 同时又需要其他参数-->
+    <!-- 在调用方式, 如何手动的获取到浏览器参数的event对象: $event-->
+    <button @click="btn3Click(param, $event)">按钮3</button>
+  </div>
+
+  <hr>
+
+  <h1>3. v-on修饰符</h1>
+  <div id="v_on_modifier">
+    <!--1. .stop修饰符的使用-->
+    <div @click="divClick">
+      aaaaaaa
+      <button @click.stop="btnClick">按钮</button>
+    </div>    
+
+    <!--2. .prevent修饰符的使用-->
+    <br>
+    <form action="http://www.baidu.com/">
+      <input type="submit" value="提交" @click.prevent="submitClick"><!--阻止默认行为-->
+    </form>
+    <form action="http://www.baidu.com/"  @submit.prevent><!--阻止默认行为，没有表达式-->
+      <input type="submit" value="提交">
+    </form>
+
+    <!--3. .监听某个键盘的键别名-->
+    <input type="text" @keyup.enter="keyUp">
+    <!--3. .监听某个键盘的键代码-->
+    <input type="text" @keyup.13="keyUp">
+
+    <!--4. .once修饰符的使用-->
+    <button @click.once="btn2Click">按钮2</button>
+  </div>
+  <hr>
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  // v-on的基本使用
+  const v_on_base = new Vue({
+    el: "#v_on_base",
+    data: {
+      count: 0,
+    },
+    methods: {
+      add(){
+        this.count ++;
+      },
+      sub(){
+        this.count --;
+      }
+    }
+  })
+
+  // v-on的参数问题
+  const v_on_param = new Vue({
+    el: "#v_on_param",
+    data: {
+      param: 123,
+    },
+    methods: {
+      btn1Click() {
+        console.log("btn1Click");
+      },
+      btn2Click(event) {
+        console.log('btn2Click', event);
+      },
+      btn3Click(abc, event) {
+        console.log('btn3Click', abc, event);
+      }
+    }
+  })
+
+  // v-on的修饰符
+  const v_on_modifier = new Vue({
+    el: "#v_on_modifier",
+    data: {
+      message: '你好啊'
+    },
+    methods: {
+      btnClick() {
+        console.log("btnClick");
+      },
+      divClick() {
+        console.log("divClick");
+      },
+      submitClick() {
+        console.log('submitClick');
+      },
+      keyUp() {
+        console.log('keyUp');
+      },
+      btn2Click() {
+        console.log('btn2Click');
+      }
+    }
+  })
+</script>
