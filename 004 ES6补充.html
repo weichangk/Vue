@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+1. 块级作用域
+    var是没有块级作用域（最基本的语句是用于组合语句的语句块。该块由一对大括号界定。）；ES6中的let是有块级作用域
+
+2. const的使用
+    当我们修饰的标识符不会被再次赋值时, 就可以使用const来保证数据的安全性。
+    建议: 在ES6开发中，优先使用const, 只有需要改变某一个标识符的时候才使用let。
+
+3. 对象字面量增强写法
+
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <div id="1">
+    <button>按钮1</button>
+    <button>按钮2</button>
+    <button>按钮3</button>
+    <button>按钮4</button>
+    <button>按钮5</button>
+  </div>
+
+</body>
+</html>
+<script src="js/jquery-3.6.0.js"></script>
+<script>
+  // 1. 块级作用域
+  // var是没有块级作用域限制
+  {  
+    var var_name1 = 'var_name1';
+    console.log(var_name1); // var_name1
+  }
+  console.log(var_name1); // var_name1
+
+  if (true) {
+    var var_name11 = "var_name11";
+  }
+  else{
+    var var_name111 = "var_name111";
+  }
+  console.log(var_name11); // var_name11
+  console.log(var_name111); // undefined
+
+  // let有块级作用域
+  {  
+    let let_name1 = 'let_name1';
+    console.log(let_name1); // let_name1
+  }
+  // console.log(let_name1); // Uncaught ReferenceError: let_name1 is not defined
+
+  if (true) {
+    let let_name11 = "let_name11";
+  }
+  else{
+    let let_name111 = "let_name111";
+  }
+  // console.log(let_name11); // Uncaught ReferenceError: let_name11 is not defined
+  // console.log(let_name111); // Uncaught ReferenceError: let_name111 is not defined
+
+
+  var btns = $("#1 button");
+  console.log(btns);
+  // var是没有块级作用域限制 每次遍历公用一个i且都使用最终遍历后的i的值
+  // for(var i = 0; i <= btns.length - 1; i++)
+  // {
+  //   $(btns[i]).click(function(){
+  //     console.log('第' + i + '个按钮被点击'); // 第5个按钮被点击
+  //   })
+  // }
+
+  // for(var i = 0; i <= btns.length - 1; i++)
+  // {
+  //   (
+  //     function(i){
+  //       $(btns[i]).click(function(){
+  //         console.log('第' + i + '个按钮被点击'); // 第i个按钮被点击
+  //       })
+  //     }     
+  //   )(i) // 使用闭包，函数是一个作用域。
+  // }
+
+  // let有块级作用域 每次遍历的每个i都有自己的块级作用域
+  for(let i = 0; i <= btns.length - 1; i++)
+  {
+    $(btns[i]).click(function(){
+      console.log('第' + i + '个按钮被点击'); // 第i个按钮被点击
+    })
+  }
+
+
+
+  // 2. const的使用
+  // 2.1. 注意一: 一旦给const修饰的标识符被赋值之后, 不能修改
+  const constName = "constName";
+  // constName = ""; // Uncaught TypeError: Assignment to constant variable. 
+
+  // 2.2. 注意二: 在使用const定义标识符,必须进行赋值
+  // const constName1; // Uncaught SyntaxError: Missing initializer in const declaration
+
+  // 2.3. 注意三: 常量的含义是指向的对象不能修改, 但是可以改变对象内部的属性.
+  const constObj = {
+    name: 'constObj',
+    age: 18,
+    height: 1.88
+  }
+  // constObj = {}
+  console.log(constObj);
+
+  constObj.name = 'kobe';
+  constObj.age = 40;
+  constObj.height = 1.87;
+  console.log(constObj); 
+
+
+
+  // 3. 对象字面量增强写法
+
+  // 1. 常规写法
+  // const objLiteralEnhancement = new Object()
+  // const objLiteralEnhancement = {
+  //   name: 'objLiteralEnhancement',
+  //   age: 18,
+  //   run: function () {
+  //     console.log('run');
+  //   },
+  //   eat: function () {
+  //     console.log('eat');
+  //   }
+  // }
+
+  // 2. 属性的增强写法
+  const name = 'objLiteralEnhancement';
+  const age = 18;
+  const height = 1.88
+
+  // ES5的写法
+  const objLiteralEnhancement1 = {
+    name: name,
+    age: age,
+    height: height
+  }
+  console.log(objLiteralEnhancement1);
+
+  // ES6的写法
+  const objLiteralEnhancement2 = {
+    name,
+    age,
+    height,
+  }
+  console.log(objLiteralEnhancement2);
+
+
+  // 3. 函数的增强写法
+  // ES5的写法
+  const functionLiteralEnhancement1 = {
+    run: function () {
+      //
+    },
+    eat: function () {
+      //
+    }
+  }
+
+  // ES6的写法
+  const functionLiteralEnhancement2 = {
+    run() {
+      //
+    },
+    eat() {
+      //
+    }
+  }
+</script>
