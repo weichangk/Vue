@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<!--
+1. v-if、v-else-if、v-else
+    这三个指令与JavaScript的条件语句if、else、else if类似。Vue的条件指令可以根据表达式的值在DOM中渲染或销毁元素或组件
+    Vue在进行DOM渲染时，出于性能考虑，会尽可能的复用已经存在的元素，而不是重新创建新的元素。
+    如果不希望Vue出现元素重复利用的问题，可以给对应的元素添加key，需要保证key的不同。
+
+2. v-show
+    v-show的用法和v-if非常相似，也用于决定一个元素是否渲染。v-if当条件为false时，压根不会有对应的元素在DOM中。v-show当条件为false时，仅仅是将元素的display属性设置为none而已。
+    当需要在显示与隐藏之间切片很频繁时，使用v-show。当只有一次切换时，通过使用v-if。
+
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>1. v-if、v-else-if、v-else</h1>
+    <div id = "v_if_test">
+      <!--1-->
+      <p v-if = "isShow">{{msg}}</p>
+      <button @click = "isShow = !isShow">切换显示</button>
+      <!--2-->
+      <p v-if = "score >= 90">优秀 {{score}}</p>
+      <p v-else-if = "score >= 80">良好 {{score}}</p>
+      <p v-else-if = "score >= 60">及格 {{score}}</p>
+      <p v-else>不及格 {{score}}</p>
+      <!--3-->
+      <p><b>{{Score}} {{score}}</b></p>
+      <button @click = "addScore">加分</button>
+      <button @click = "subScore">减分</button>
+      <!--4-->
+      <br>
+      <span v-if = "loginType === 'userName'">
+        <label for="">用户账号：</label>
+        <input type="text" placeholder="请输入用户账号" key = "userName_input"><!--添加key防止元素重复利用，防止切换时保留之前的输入内容。需要保证key的不同，重新渲染-->
+      </span>
+      <span v-else>
+        <label for="">邮箱：</label>
+        <input type="text" placeholder="请输入邮箱" key = "email_input">
+      </span>
+      <button @click = "changeLoginType">切换登录类型</button>
+    </div>
+    <hr>
+<!---->
+    <h1>2. v-show</h1>
+    <div id="v_show_test">
+      <p v-show = "isShow">{{msg}}</p>
+      <button @click = "changeShow">切换显示</button></button>
+    </div>
+    <hr>
+<!---->
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  // 1. v-if、v-else-if、v-else
+  const v_if_test = new Vue({
+    el: "#v_if_test",
+    data: {
+      msg: "hello v_if_test",
+      isShow: true,
+      score: 60,
+      loginType: "userName",
+    },
+    methods: {
+      addScore(){
+        this.score +=10;
+      },
+      subScore(){
+        this.score -=10;
+      },
+      changeLoginType(){
+        this.loginType = this.loginType === "email" ? "userName" : "email";
+      }
+    },
+    computed: {
+      Score: {
+        get: function(){
+          if(this.score >= 90)
+          {
+            return "优秀";
+          }
+          else if(this.score >= 80)
+          {
+            return "良好";
+          }
+          else if(this.score >=60)
+          {
+            return "及格";
+          }
+          else
+          {
+            return "不及格";
+          }
+        }
+      }
+    }
+  })
+
+  // 2. v-show
+  const v_show_test = new Vue({
+    el: "#v_show_test",
+    data: {
+      msg: "hello v_show_test",
+      isShow: true,
+    },
+    methods: {
+      changeShow(){
+        this.isShow = !this.isShow;
+      }
+    }
+  })
+</script>
