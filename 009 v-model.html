@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<!-- 
+1. v-model 的使用和原理
+  Vue中使用v-model指令来实现表单元素和数据的双向绑定（view改变同步model，model改变同步view）
+  v-model其实是一个语法糖，它的背后本质上是包含两个操作：1.v-bind绑定一个value属性；2.v-on指令给当前元素绑定input事件
+
+2. v-model：radio
+  input的value对应到data中的变量属性中。
+
+3. v-model：checkbox
+  复选框分为两种情况：单个勾选框和多个勾选框。
+  单个勾选框：v-model即为布尔值。此时input的checked对应的value赋值到data中的变量属性中。
+  多个复选框：当是多个复选框时，因为可以选中多个，所以对应的data中属性是一个数组。当选中某一个时，就会将input的value添加到数组中。
+
+4. v-model：select
+  和checkbox一样，select也分单选和多选两种情况。
+  单选：只能选中一个值。v-model绑定的是一个值。当我们选中option中的一个时，会将它对应的value赋值到data中的变量属性中。
+  多选：可以选中多个值。v-model绑定的是一个数组。当选中多个值时，就会将选中的option对应的value添加到data中的数组属性中。
+
+
+5. 值绑定
+  在上面的表单元素中，元素value中的值都是在定义input的时候直接给定的，但是真实开发中，这些input的值可能是从网络获取或定义在data中的。
+  所以我们可以通过v-bind:value动态的给value绑定值。
+
+
+6. 修饰符
+  lazy修饰符：默认情况下，v-model默认是在input事件中同步输入框的数据的。lazy修饰符可以让数据在失去焦点或者回车时才会更新。
+  number修饰符：默认情况下，在输入框中无论我们输入的是字母还是数字，都会被当做字符串类型进行处理。number修饰符可以让在输入框中输入的内容自动转成数字类型
+  trim修饰符：trim修饰符可以过滤内容左右两边的空格
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>1. v-model 的使用和原理</h1>
+  <div id="v_model_use">
+    <label for="v_model_use_lable"></label>
+    <input type="text" id="v_model_use_lable" v-model = "msg"><!--view中的input改变同步model中的msg-->
+    <p>{{msg}}</p>
+    <button @click = "changeMsg">model msg change</button>
+  </div>
+  <hr>
+  <div id="v_model_theory">
+    <!--v-bind:value="msg" -- model中的msg改变同步view中的input-->
+    <!--v-on:input="msg = $event.target.value" -- view中的input改变同步model中的msg-->
+    <input type="text" v-bind:value="msg" v-on:input="msg = $event.target.value">
+    <p>{{msg}}</p>
+    <button @click = "changeMsg">model msg change</button>
+  </div>
+  <hr>
+<!---->
+  <h1>2. v-model：radio</h1>
+  <div id="v_model_radio">
+    <label for="male">
+      <input type="radio" name="sex" id="male" value="男" v-model = "sex">男
+      <!--设置相同name产生互斥-->
+    </label>
+    <label for="famale">
+      <input type="radio" name="sex" id="famale" value="女" v-model = "sex">女
+    </label>
+    <p>{{sex}}</p>
+    <button @click = "defaultMale">default male</button>
+  </div>
+  <hr>
+<!---->
+  <h1>3. v-model：checkbox</h1>
+  <div id="v_model_checkbox">
+    <!--单选-->
+    <label for="agree">
+      <input type="checkbox" name="" id="agree" v-model = "isAgree">同意协议
+    </label>
+    <p>是否同意：{{isAgree}}</p>
+    <button :disabled = "!isAgree">下一步</button>
+    <br>
+
+    <!--多选-->
+    <input type="checkbox" name="" id="" value="篮球" v-model = "hobbies">篮球
+    <input type="checkbox" name="" id="" value="排球" v-model = "hobbies">排球
+    <input type="checkbox" name="" id="" value="混球" v-model = "hobbies">混球
+    <p>爱好：{{hobbies}}</p>
+  </div>
+  <hr>
+<!---->
+  <h1>4. v-model：select</h1>
+  <div id="v_model_select">
+    <!--单选-->
+    <select name="" id="" v-model = "fruit">
+      <option value="苹果">苹果</option>
+      <option value="香蕉">香蕉</option>
+      <option value="葡萄">葡萄</option>
+    </select>
+    <p>{{fruit}}</p>
+    <!--多选-->
+    <select name="" id="" v-model = "fruits" multiple>
+      <option value="苹果">苹果</option>
+      <option value="香蕉">香蕉</option>
+      <option value="葡萄">葡萄</option>
+      <option value="雪梨">雪梨</option>
+    </select>
+    <p>{{fruits}}</p>
+  </div>
+  <hr>
+<!---->
+  <h1>5. 值绑定</h1>
+  <div id="value_bind">
+    <input type="checkbox" name="" id="" value="篮球" v-model = "hobbies">篮球
+    <input type="checkbox" name="" id="" value="排球" v-model = "hobbies">排球
+    <input type="checkbox" name="" id="" value="混球" v-model = "hobbies">混球
+    <p>爱好：{{hobbies}}</p>
+    <label :for="item" v-for = "item in originalHobbies">
+      <input type="checkbox" name="" :id="item" :value="item" v-model = "hobbies">{{item}}
+    </label>
+  </div>
+  <hr>
+<!---->
+  <h1>6. 修饰符</h1>
+  <div id="modifier">
+    <input type="text" v-model.lazy = "lazyMsg">
+    <p>{{lazyMsg}}</p>
+    <input type="number" name="" id="" v-model.number = "numberMsg">
+    <p>{{numberMsg}} - {{typeof numberMsg}}</p>
+    <input type="text" v-model.trim = "trimMsg">
+    <p>{{trimMsg}}</p>
+  </div>
+  <hr>
+<!---->
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  // 1. v-model 的使用和原理
+  const v_model_use = new Vue({
+    el: "#v_model_use",
+    data: {
+      msg: "hello v-model",
+    },
+    methods: {
+      changeMsg(){
+        this.msg += " change!";//model中的msg改变同步view中的input
+      },
+    }
+  })
+  const v_model_theory = new Vue({
+    el: "#v_model_theory",
+    data: {
+      msg: "hello v-model theory",
+    },
+    methods: {
+      changeMsg(){
+        this.msg += " change!";
+      },
+    }
+  })
+  
+  // 2. v-model：radio
+  const v_model_radio = new Vue({
+    el: "#v_model_radio",
+    data: {
+      msg: "hello v-model radio",
+      sex: "",
+    },
+    methods: {
+      defaultMale(){
+        this.sex = "男";
+      }
+    }
+  })
+  // 3. v-model：checkbox
+  const v_model_checkbox = new Vue({
+    el: "#v_model_checkbox",
+    data: {
+      msg: "hello v-model checkbox",
+      isAgree: false,
+      hobbies: ["篮球"],
+    }
+  })
+  // 4. v-model：select
+  const v_model_select = new Vue({
+    el: "#v_model_select",
+    data: {
+      msg: "hello v-model select",
+      fruit: "葡萄",
+      fruits: ["葡萄", "苹果"]
+    }
+  })
+  // 5. 值绑定
+  const value_bind = new Vue({
+    el: "#value_bind",
+    data: {
+      msg: "hello 值绑定",
+      hobbies: ["篮球"],
+      originalHobbies: ["篮球", "排球", "混球", "羽毛球", "乒乓球", "高尔夫球", "气球"],
+    }
+  })
+  // 6. 修饰符
+  const modifier = new Vue({
+    el: "#modifier",
+    data: {
+      lazyMsg: "hello lazy",
+      numberMsg: "0",
+      trimMsg: "   hello trim   ",
+    }
+  })
+</script>
