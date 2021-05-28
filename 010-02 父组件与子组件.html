@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- 
+组件和组件之间存在层级关系，而其中一种非常重要的关系就是父子组件的关系
+注意点：不要觉得子组件在父组件中注册过就能直接在父组件挂载的vue实例中直接使用子组件，这种情况下是不能直接使用子组件的。要使用组件，必须要再vue实例中挂载。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    {{msg}}
+    <cpn1></cpn1>
+    <cpn2></cpn2><!--未注册不能使用，在父组件中注册过也无效-->
+  </div>
+</body>
+</html>
+<script src="js/vue.js"></script>
+
+<script>
+
+  const cpn2 = Vue.extend({
+    template: `
+      <p>我是子组件段落</p>
+    `
+  });
+
+    const cpn1 = Vue.extend({
+    template: `
+      <span>
+      <p>我是父组件段落</p>
+      <cpn2></cpn2>
+      </span>
+    `,//在父组件中使用子组件。发现问题：父组件使用子组件时不能直接在template下使用子组件，需要包多一层元素！！！
+    components: {
+      cpn2,//父组件中注册子组件。发现问题：子组件需要写在父组件前面才能被成功访问！！！
+    }
+  });
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 父组件与子组件",
+    },
+    components: {
+      cpn1,//Vue实例中注册局部组件，该组件内部有子组件
+    }
+  })
+</script>

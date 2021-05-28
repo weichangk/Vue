@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- 
+当我们通过调用Vue.component()注册组件时，组件的注册是全局的，这意味着该组件可以在任意Vue实例下使用。
+如果我们注册的组件是挂载在某个实例中, 那么就是一个局部组件。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app1">
+    <p>{{msg}}</p>
+    <globalcpn></globalcpn>
+  </div>
+  <hr>
+  <div id="app2">
+    <p>{{msg}}</p>
+    <globalcpn></globalcpn>
+    <partcpn></partcpn><!--无法渲染，因为局部组件只能在挂载的实例中使用-->
+  </div>
+  <hr>
+  <div id="app3">
+    <p>{{msg}}</p>
+    <partcpn></partcpn>
+  </div>
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  const globalcpn = Vue.extend({
+    template: `
+      <div>
+        <p>我是全局组件段落</p>
+      </div>
+    `
+  });
+  const partcpn = Vue.extend({
+    template: `
+      <div>
+        <p>我是局部组件段落</p>
+      </div>
+    `
+  });
+
+  Vue.component("globalcpn", globalcpn);//注册全局组件  发现问题：组件标签不能使用驼峰命名，首字母大写可以！！！
+
+
+
+  const app1 = new Vue({
+    el: "#app1",
+    data: {
+      msg: "hello 全局组件与局部组件 app1",
+    }
+  });
+
+  const app2 = new Vue({
+    el: "#app2",
+    data: {
+      msg: "hello 全局组件与局部组件 app2",
+    },
+  });
+
+  const app3 = new Vue({
+    el: "#app3",
+    data: {
+      msg: "hello 全局组件与局部组件 app3",
+    },
+    //在vue实例中注册局部组件
+    components: {
+      //"partcpn": partcpn,
+      partcpn,//字面量增强写法
+    }
+  });
+</script>

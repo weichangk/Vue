@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- 
+组件的使用分成三个步骤：
+  1.创建组件构造器
+    调用Vue.extend()创建的是一个组件构造器
+    通常在创建组件构造器时，传入template代表我们自定义组件的模板。
+    该模板就是在使用到组件的地方，要显示的HTML代码。
+
+  2.注册组件
+    调用Vue.component()是将刚才的组件构造器注册为一个组件，并且给它起一个组件的标签名称
+    所以需要传递两个参数：1、注册组件的标签名 2、组件构造器
+
+  3.使用组件
+    组件必须挂载在某个Vue实例下，否则它不会生效。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+    <div id="app">
+      <p>{{msg}}</p>
+      <cpn></cpn><!--3.使用组件-->
+      <div>
+        <cpn></cpn><!--3.使用组件-->
+      </div>
+    </div>
+    <cpn></cpn><!--没有被渲染出来，因为它没有在vue挂载的实例下使用-->
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  //1.创建组件构造器
+  const cpn = Vue.extend({
+    template: `
+      <div>
+        <h1>我是组件的标题</h1>
+        <p>我是组件的段落</p>
+      </div>
+    `
+  });
+
+  //2.注册组件
+  Vue.component("cpn", cpn);
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 组件的基本使用",
+    }
+  });
+</script>
