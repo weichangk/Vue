@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- 
+Vue为了简化这个过程，提供了注册的语法糖，主要是省去了调用Vue.extend()的步骤，而是可以直接使用一个对象来代替。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <cpn></cpn>
+    <cpn1></cpn1>
+  </div>
+</body>
+</html>
+<script src="js/vue.js"></script>
+<script>
+  //注册组件语法糖（全局组件）
+  Vue.component("cpn",{
+    template:`
+      <div>我是注册组件语法糖写的全局组件</div>
+    `
+  })
+
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 注册组件语法糖"
+    },
+    components: {
+      "cpn1": {
+        template:`
+          <div>我是注册组件语法糖写的局部组件</div>
+        `     
+      }
+    }
+  })
+</script>

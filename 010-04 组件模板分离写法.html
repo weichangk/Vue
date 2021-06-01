@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <cpn></cpn>
+    <cpn1></cpn1>
+  </div>
+</body>
+</html>
+
+<template id="cpn-template">
+  <p>使用 template 组件模板写的全局组件</p>
+</template>
+
+<template id="cpn-template1">
+  <p>使用 template 组件模板写的局部组件</p>
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+  Vue.component("cpn",{
+    template: "#cpn-template",
+  })
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 组件模板分离写法",
+    },
+    components: {
+      "cpn1": {
+        template: "#cpn-template1"
+      }
+    }
+  })
+</script>
