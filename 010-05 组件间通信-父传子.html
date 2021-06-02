@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!-- 
+子组件不能直接访问父组件的数据，父组件也不能直接访问子组件的数据，可以把Vue实例看作根组件。
+组件对象也有一个data属性，也可以有methods等属性。
+data属性必须是一个函数，而且这个函数返回一个对象，对象内部保存着数据，data属性是一个函数确保了每个使用组件的实例拥有自己的组件内存数据。
+
+在开发中，往往一些数据确实需要从上层传递到下层
+比如在一个页面中，我们从服务器请求到了很多的数据，其中一部分数据，并非是我们整个页面的大组件来展示的，而是需要下面的子组件进行展示。
+这个时候，并不会让子组件再次发送一个网络请求，而是直接让大组件(父组件)将数据传递给小组件(子组件)。
+
+通过 props 向子组件传递数据，真实的开发中，Vue实例和子组件的通信和父组件和子组件的通信过程是一样的。
+通过事件 this.$emit 向父组件发送消息。
+
+
+
+props基本用法
+在组件中，使用选项props来声明需要从父级接收到的数据。
+
+props的值有两种方式：
+  方式一：字符串数组，数组中的字符串就是传递时的名称。
+  方式二：对象，对象可以设置传递时的类型，也可以设置默认值等。当需要对props进行类型等验证时，就需要对象写法了。
+
+  验证都支持哪些数据类型呢？
+  String
+  Number
+  Boolean
+  Array
+  Object
+  Date
+  Function
+  Symbol
+
+  当我们有自定义构造函数时，验证也支持自定义的类型
+
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <hr>
+    <cpn :cmsg1="msg1" :cbooks="books"></cpn> <!--将父组件数据绑定到子组件props中-->
+
+  </div>
+
+  <hr>
+
+  <div id="app1">
+    {{msg}}
+    <hr>
+    <cpn1 
+      :propA="a"
+      :propb="b"
+      :propc="c">
+    </cpn1>
+  </div>
+
+</body>
+</html>
+
+<!--子组件cpn模板-->
+<template id="cpn">
+  <div>
+    <p>我是子组件 cpn</p>
+    <p>{{cmsg1}}</p>
+    <ul>
+      <li v-for="item in cbooks">{{item}}</li>
+    </ul>
+  </div>
+</template>
+
+<!--子组件cpn1模板-->
+<template id="cpn1">
+  <div>
+    <p>{{propa}}</p>
+    <p>{{propb}}</p>
+    <p>{{propc}}</p>
+    <p>{{propd}}</p>
+    <p>{{prope}}</p>
+    <p>{{propf}}</p>
+  </div>
+
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+
+  //子组件cpn
+  const cpn = {
+    template: "#cpn",
+    props: ["cmsg1", "cbooks"],//通过props 设置变量接收父组件数据
+  }
+  
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 组件通信-父传子 测试",
+      msg1: "父组件的 msg1",
+      books: ["html", "css", "javaScript", "jQuery", "vue"],
+    },
+    components: {
+      cpn,//注册子组件
+    }
+  })
+
+
+  //子组件cpn1
+  const cpn1 = {
+    template: "#cpn1",
+    props:{
+      //基础类型检查 null匹配任何类型
+      propa:null,
+
+      //多个可能类型
+      propb:[Number, String],
+
+      //必填的字符串
+      propc:{
+        type: String,
+        required: true,
+      },
+
+      //带有默认的数值
+      propd:{
+        type: Number,
+        default: 400,
+      },
+
+      //带有默认值的对象
+      prope:{
+        type: Object,
+        default: function(){
+          //对象或数组默认值必须从一个工厂函数中获取
+          return {
+            name: "weick...",
+          }
+        }
+      },
+
+      //自定义验证函数
+      propf:{
+        type: String,
+        validator: function(){
+          //这个值必须匹配下列字符串中的一个
+          return ["success", "warning", "error"].indexOf(value) !== -1;
+        }
+      }
+    }
+  }
+
+  const app1 = new Vue({
+    el: "#app1",
+    data: {
+      msg: "hello props基本用法",
+      a: 10,
+      b: "20",
+      c: "30",
+      d: 40,
+      e: {
+        //name: "weick",
+      },
+      f:"success",
+    },
+    components: {
+      cpn1,
+    }
+  })
+</script>

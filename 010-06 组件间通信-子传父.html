@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!-- 
+子组件不能直接访问父组件的数据，父组件也不能直接访问子组件的数据，可以把Vue实例看作根组件。
+组件对象也有一个data属性，也可以有methods等属性。
+data属性必须是一个函数，而且这个函数返回一个对象，对象内部保存着数据，data属性是一个函数确保了每个使用组件的实例拥有自己的组件内存数据。
+
+在开发中，往往一些数据确实需要从上层传递到下层
+比如在一个页面中，我们从服务器请求到了很多的数据，其中一部分数据，并非是我们整个页面的大组件来展示的，而是需要下面的子组件进行展示。
+这个时候，并不会让子组件再次发送一个网络请求，而是直接让大组件(父组件)将数据传递给小组件(子组件)。
+
+通过 props 向子组件传递数据，真实的开发中，Vue实例和子组件的通信和父组件和子组件的通信过程是一样的。
+通过事件 this.$emit 向父组件发送消息。
+
+
+
+
+子组件传递数据或事件到父组件中需要使用自定义事件来完成。
+
+什么时候需要自定义事件呢？
+  当子组件需要向父组件传递数据时，就要用到自定义事件了。
+  我们之前学习的v-on不仅仅可以用于监听DOM事件，也可以用于组件间的自定义事件。
+
+自定义事件的流程：
+  在子组件中，通过this.$emit()来触发事件。
+  在父组件中，通过v-on来监听子组件事件。
+
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    {{msg}}
+    <hr>
+    <cpn @add="changeTotal" @sub="changeTotal"></cpn><!--将父组件监听事件处理方法绑定到子组件自定义触发事件方法中-->
+    <p>点击次数:{{total}}</p>
+  </div>
+</body>
+</html>
+
+<template id="cpn">
+  <div>
+    <button @click="add">+</button>
+    <button @click="sub">-</button>
+  </div>
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+
+  const cpn = {
+    template: "#cpn",
+    data() {//组件对象也有一个data属性，须是一个函数，而且这个函数返回一个对象。
+      return {
+        count: 0,
+      }
+    },
+    methods: {
+      add(){
+        this.count ++;
+        this.$emit("add", this.count);//在子组件中，通过this.$emit()来触发事件。
+      },
+      sub(){
+        this.count --;
+        this.$emit("sub", this.count);
+      }
+    }
+
+  }
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 组件间通信-子传父 测试",
+      total: 0,
+    },
+    methods: {
+      changeTotal(value){
+        this.total = value;
+      }
+    },
+    components: {
+      cpn,
+    },
+  })
+</script>
