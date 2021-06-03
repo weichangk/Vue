@@ -17,65 +17,49 @@
 
 <template id="cpn">
   <div>
-    <p>我是子组件cpn 的段落</p>
-
+    <p>我是cpn p</p>
     <p>我是父组件传到子组件的props a: {{propa}}</p>
     <p>我是父组件传到子组件的data a: {{cpna}}</p>
 
-    <!--子组件元素不应该直接绑定props 中的数据，应该绑定data中的数据-->
-    <!--<input type="text" v-model="propa">-->
     <input type="text" v-model="cpna">
 
     <p>我是父组件传到子组件的props b: {{propb}}</p>
     <p>我是父组件传到子组件的data a: {{cpnb}}</p>
 
-    <!--<input type="text" v-model="propb">-->
     <input type="text" v-model="cpnb">
-
-
-    <hr>
-    <p>实现组件间双向绑定</p>
-    <input type="text" :value="cpna" @input="acpninput"><br>
-    <input type="text" :value="cpnb" @input="bcpninput">
-
   </div>
 </template>
 
 <script src="js/vue.js"></script>
 <script>
+
   const cpn = {
     template: "#cpn",
-    props:["propa", "propb"],
+    props: ["propa", "propb"],
     data(){
       return {
         cpna: this.propa,
         cpnb: this.propb,
       }
     },
-    methods: {
-      acpninput(event){
-        this.cpna = event.target.value;
-        this.$emit("cpnachange", this.cpna)//
-
-        this.cpnb = this.cpna * 100;
+    watch: {
+      cpna(newvalue){
+        this.cpnb = newvalue * 10;
         this.$emit("cpnbchange", this.cpnb)
       },
-      bcpninput(event){
-        this.cpnb = event.target.value;
-        this.$emit("cpnbchange", this.cpnb)//
-
-        this.cpna = this.cpnb / 100;
+      cpnb(newvalue){
+        this.cpna = newvalue / 10;
         this.$emit("cpnachange", this.cpna)
-      }
+      },     
     }
   }
 
   const app = new Vue({
     el: "#app",
     data: {
-      msg: "hello 组件间通信-结合双向绑定  我是父组件",
-      a: 10,
-      b: 20,
+      msg: "hello watch",
+      a: 100,
+      b: 200,
     },
     components: {
       cpn,
@@ -86,7 +70,7 @@
       },
       appbchange(value){
         this.b = value;
-      }
+      },     
     }
   })
 
