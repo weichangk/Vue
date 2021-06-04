@@ -26,20 +26,57 @@ $refs的使用：
   <div id="app">
     {{msg}}
     <hr>
-    <cpn></cpn>
+    <cpn ref="ref"></cpn>
+    <button @click="btnChildrenCpnClick">使用 children 访问 cpn </button>
+    <button @click="btnRefsCpnClick">使用 refs 访问 cpn</button>
   </div>
 </body>
 </html>
 
+<template id="cpn1">
+  <div>
+    <p>我是cpn1 p</p>
+  </div>
+</template>
 <template id="cpn">
-  <p>我是cpn p</p>
+  <div>
+    <p>我是cpn p</p>
+    <cpn1 ref="ref1"></cpn1>
+    <!--<cpn1></cpn1>-->
+  </div>
 </template>
 
 <script src="js/vue.js"></script>
 <script>
+  const cpn1 = {
+    template: "#cpn1",
+    data(){
+      return {
+        name: "my name is cpn1"
+      }
+    },
+    methods: {
+      show(){
+        console.log("hello cpn1");
+      }
+    },
+  }
 
   const cpn = {
     template: "#cpn",
+    data(){
+      return {
+        name: "my name is cpn"
+      }
+    },
+    methods: {
+      show(){
+        console.log("hello cpn");
+      }
+    },
+    components: {
+      cpn1,
+    },
   }
 
   const app = new Vue({
@@ -49,6 +86,21 @@ $refs的使用：
     },
     components: {
       cpn,
+    },
+    methods: {
+      btnChildrenCpnClick(){
+        console.log(this.$children)//如果组件模板中没有使用子组件，那么该组件.$children下没有子组件！！！ 
+        this.$children[0].show()
+        console.log(this.$children[0].$children[0])
+        this.$children[0].$children[0].show()
+      },
+      btnRefsCpnClick(){
+        console.log(this.$refs)
+        console.log(this.$refs.ref)
+        console.log(this.$refs.ref.name)
+        console.log(this.$refs.ref.$refs.ref1)
+        console.log(this.$refs.ref.$refs.ref1.name)
+      },
     }
   })
 </script>

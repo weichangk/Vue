@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!-- 
+如果我们想在子组件中直接访问父组件，可以通过$parent
+注意事项：
+  尽管在Vue开发中，我们允许通过$parent来访问父组件，但是在真实开发中尽量不要这样做。
+  子组件应该尽量避免直接访问父组件的数据，因为这样耦合度太高了。
+  如果我们将子组件放在另外一个组件之内，很可能该父组件没有对应的属性，往往会引起问题。
+  另外，更不好做的是通过$parent直接修改父组件的状态，那么父组件中的状态将变得飘忽不定，很不利于我的调试和维护。
+  $root访问根组件
+  
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <hr>
+    <cpn></cpn>
+    <br>
+    <button @click="btnChildrenCpnClick">父访问子</button>
+  </div>
+</body>
+</html>
+
+<template id="cpn1">
+  <div>
+    <p>我是cpn1 p</p>
+    <button @click="btnCpn1Click">cpn1 访问父组件</button>
+    <button @click="btnCpn1Click1">cpn1 访问父父组件</button>
+    <button @click="btnCpn1ClickRoot">cpn1 访问root组件</button>
+  </div>
+</template>
+
+<template id="cpn">
+  <div>
+    <p>我是cpn p</p>
+    <button @click="btnCpnClick">cpn 访问父组件</button>
+    <cpn1></cpn1>
+  </div>
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+  const cpn = {
+    template: "#cpn",
+    data(){
+      return {
+        name: "cpn",
+      }
+    },
+    methods: {
+      btnCpnClick(){
+        console.log(this.$parent);
+        console.log(this.$parent.name);
+      },
+    },
+    components: {
+      cpn1: {
+        template: "#cpn1",
+        methods: {
+          btnCpn1Click(){
+            console.log(this.$parent);
+            console.log(this.$parent.name);
+          },
+          btnCpn1Click1(){
+            console.log(this.$parent.$parent);
+            console.log(this.$parent.$parent.name);
+          },
+          btnCpn1ClickRoot(){
+            console.log(this.$root.name);
+          }     
+        }
+      }
+    },
+  }
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 组件间通信-子访问父",
+      name: "app",
+    },
+    components: {
+      cpn,
+    },
+    methods: {
+      btnChildrenCpnClick(){
+        console.log(this.$children)
+      }
+    }
+  })
+</script>
