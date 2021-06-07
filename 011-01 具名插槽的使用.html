@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- 
+当子组件的功能复杂时，子组件的插槽可能并非是一个。
+  比如我们封装一个导航栏的子组件，可能就需要三个插槽，分别代表左边、中间、右边。
+  那么，外面在给插槽插入内容时，如何区分插入的是哪一个呢？
+  这个时候，我们就需要给插槽起一个名字
+
+如何使用具名插槽呢？
+  非常简单，只要给slot元素一个name属性即可
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <hr>
+    <cpn></cpn>
+    <hr>
+    <cpn><span slot="left">左左左</span></cpn>
+    <hr>
+    <cpn><span slot="center">中中中</span></cpn>
+    <hr>
+    <cpn><span slot="right">右右右</span></cpn>
+  </div>
+</body>
+</html>
+
+<template id="cpn">
+  <div>
+    <p>hello 我是组件 cpn 的 p</p>
+    <slot name="left">左边</slot></slot>
+    <slot name="center">中间</slot>
+    <slot name="right">右边</slot>
+    <slot><button>默认按钮</button></button></slot>
+  </div>
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+  const cpn = {
+    template: "#cpn"
+  }
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 我具名插槽的使用",
+    },
+    components: {
+      cpn,
+    }
+  })
+</script>

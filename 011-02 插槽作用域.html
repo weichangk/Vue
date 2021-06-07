@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- 
+编译作用域
+  父组件模板的所有东西都会在父级作用域内编译；子组件模板的所有东西都会在子级作用域内编译。
+
+作用域插槽是slot一个比较难理解的点，而且官方文档说的又有点不清晰。
+  父组件替换插槽的标签，但是内容由子组件来提供。
+  内容在子组件，希望父组件告诉我们如何展示，怎么办呢？利用slot作用域插槽就可以了
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <p>{{msg}}</p>
+    <hr>
+    <cpn></cpn>
+
+    <hr>
+    <cpn>
+      <template slot-scope="slot">
+        <!--<span v-for="item in slot.data">{{item}} - </span>-->
+        <span>{{slot.data.join(' - ')}}</span>
+      </template>
+    </cpn>
+
+    <hr>
+    <cpn>
+      <template slot-scope="slot">
+        <!--<span v-for="item in slot.data">{{item}} * </span>-->
+        <span>{{slot.data.join(' * ')}}</span>
+      </template>
+    </cpn>
+  </div>
+</body>
+</html>
+
+<template id="cpn">
+  <div>
+    <p>hello 我是组件 cpn 的 p</p>
+    <!--组件模板使用组件数据-->
+    <ul>
+      <li v-for="item in books">{{item}}</li>
+    </ul>
+    <p>......................</p>
+
+    <!--内容在子组件，希望父组件告诉我们如何展示，怎么办呢？利用slot作用域插槽就可以了-->
+    <slot :data="books">
+      <ul>
+        <li v-for="item in books">{{item}}</li>
+      </ul>
+    </slot>
+  </div>
+</template>
+
+<script src="js/vue.js"></script>
+<script>
+  const cpn = {
+    template: "#cpn",
+    data(){
+      return {
+        books: ["html", "css", "javaScript", "jQuery", "vue"],
+      }
+    }
+  }
+  const app = new Vue({
+    el: "#app",
+    data: {
+      msg: "hello 插槽作用域",
+    },
+    components: {
+      cpn,
+    }
+  })
+</script>
