@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- 
+在网页开发的早期，js制作作为一种脚本语言，做一些简单的表单验证或动画实现等，那个时候代码还是很少的。
+  那个时候的代码是怎么写的呢？直接将代码写在<script>标签中即可
+
+随着ajax异步请求的出现，慢慢形成了前后端的分离
+  客户端需要完成的事情越来越多，代码量也是与日俱增
+  为了应对代码量的剧增，我们通常会将代码组织在多个js文件中，进行维护。
+  但是这种维护方式，依然不能避免一些灾难性的问题。比如全局变量同名问题。另外，这种代码的编写方式对js文件的依赖顺序几乎是强制性的
+
+我们可以使用匿名函数来解决方面的重名问题
+  (function(){
+    var flag = true
+  })()
+  但是如果我们希望在其他js文件中，用到flag，应该如何处理呢？显然，另外一个文件中不容易使用，因为flag是一个局部变量。
+
+我们可以使用将需要暴露到外面的变量，使用一个模块作为出口
+  在匿名函数内部，定义一个对象。
+  给对象添加各种需要暴露到外面的属性和方法(不需要暴露的直接定义即可)。
+  最后将这个对象返回，并且在外面使用了一个MoudleA接受。
+  var ModelA = (function(){
+    //1.定义一个对象
+    var obj = {}
+    //2.对象内部添加变量和方法
+    obj.falg = true
+    obj.func = function(info){
+      console.log(info)
+    }
+    //3.将对象返回
+    return obj  
+  })()
+
+接下来，我们在其他js中怎么使用呢？
+  我们只需要使用属于自己模块的属性和方法即可
+  if(ModelA.flag){
+    concole.log('xxx')
+  }
+  ModelA.func('xxx')
+
+前端模块化开发已经有了很多现有的规范，以及对应的实现方案。
+  常见的模块化规范：CommonJS、AMD、CMD，也有ES6的Modules
+
+
+ES6导出导入
+
+导出：
+  1.导出变量
+  2.导出函数或类
+  3.export default
+    某些情况下，一个模块中包含某个的功能，我们并不希望给这个功能命名，而且让导入者可以自己来命名
+    export default在同一个模块中，不允许同时存在多个。
+
+导入：
+  我们使用export指令导出了模块对外提供的接口，下面我们就可以通过import命令来加载对应的这个模块了
+  首先，我们需要在HTML代码中引入js文件，并且类型需要设置为module
+  <script src="js/012/aaa.js" type="module"></script>
+  <script src="js/012/bbb.js" type="module"></script>
+  <script src="js/012/ccc.js" type="module"></script>
+
+  import指令用于导入模块中的内容，比如ccc.js的代码
+  import {flag, sum} from "./aaa.js";
+
+  如果我们希望某个模块中所有的信息都导入，一个个导入显然有些麻烦：
+  通过*可以导入模块中所有的export变量，但是通常情况下我们需要给*起一个别名，方便后续的使用
+  import * as aaa from './aaa.js'
+  console.log(aaa.flag);
+
+  导出例子看 js/aaa.js 文件
+  导入例子看 js/ccc.js 文件
+
+遇到问题：
+  用Vscode在浏览器打开文件调试时，或直接使用浏览器打开文件调试时遇到如下报错
+  Access to script at ‘xxx‘ from origin ‘null‘ has been blocked by CORS policy: Cross origin requests
+  原因：CORS 请求不是 HTTP  同一目录或其子目录中的其他资源不再满足 CORS 同源规则。
+  https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS/Errors/CORSRequestNotHttp
+
+  可以使用VScode的live server插件打开就好了。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>ES6模块化导出导入</h1>
+</body>
+</html>
+<script src="js/012/aaa.js" type="module"></script>
+<script src="js/012/bbb.js" type="module"></script>
+<script src="js/012/ccc.js" type="module"></script>
