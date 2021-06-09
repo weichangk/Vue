@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!-- 
+文件和文件夹解析：
+  dist文件夹：用于存放之后打包的文件
+  src文件夹：用于存放我们写的源文件
+    main.js：项目的入口文件
+    ...js：其他js文件
+  index.html：浏览器打开展示的首页html
+  package.json：通过npm init生成的，npm包管理的文件
+
+
+js文件的打包
+  现在的js文件中使用了模块化的方式进行开发，他们可以直接使用吗？不可以
+  因为如果直接在index.html引入这两个js文件，浏览器并不识别其中的模块化代码。
+  另外，在真实项目中当有许多这样的js文件时，我们一个个引用非常麻烦，并且后期非常不方便对它们进行管理。
+
+  我们应该怎么做呢？使用webpack工具，对多个js文件进行打包。
+    webpack就是一个模块化的打包工具，所以它支持我们代码中写模块化，可以对模块化的代码进行处理。 
+    另外，如果在处理完所有模块之间的关系后，将多个相互依赖的js打包到一个js文件中，引入时就变得非常方便了。
+  如何打包呢？使用webpack的指令即可
+    cd 到项目文件夹下
+    webpack ./src/main.js ./dist/bundle.js
+
+使用打包后的文件
+  打包后会在dist文件下，生成一个bundle.js文件
+  bundle.js文件，是webpack处理了项目直接文件依赖后生成的一个js文件，我们只需要将这个js文件在index.html中引入即可。
+  index.html浏览器打开展示的首页html也是需要打包到dist文件下的，此处暂不考虑。
+
+遇到问题：
+  vscode终端执行不了webpack命令？鼠标右击VSCode图标，打开属性，点击兼容性，勾选以管理员身份运行此程序，应用，确定，重新打开VSCode，问题就解决了。
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>01 webpack起步</h1>
+</body>
+</html>
+
+<!--<script src="./src/main.js"></script>--><!--这样引用不能识别使用了模块化的方式进行开发的js代码-->
+
+<script src="./dist/bundle.js"></script>
+

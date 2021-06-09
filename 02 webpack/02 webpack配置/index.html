@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<!-- 
+如果每次使用webpack打包命令都需要写上入口和出口作为参数，就非常麻烦，
+有没有一种方法可以将这两个参数写到配置中，在运行时，直接读取，只使用webpack命令就可以实现打包呢？
+  当然可以，就是创建一个webpack.config.js文件，指定打包的入口文件和导出的文件路径和文件名称。
+
+  由于webpack.config.js文件需要用到获取项目文件路径，需要导入node的path模块。导入node的模块之前需要npm init
+  在node开发中使用npm init会生成一个pakeage.json文件，这个文件主要是用来记录这个项目的详细信息的，它会将我们在项目开发中所要用到的包，以及项目的详细信息等记录在这个项目中。
+
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>02 webpack配置</h1>
+</body>
+</html>
+
+
+<script src="./dist/bundle.js"></script>
+
