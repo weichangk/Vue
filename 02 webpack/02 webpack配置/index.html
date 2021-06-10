@@ -7,6 +7,55 @@
   由于webpack.config.js文件需要用到获取项目文件路径，需要导入node的path模块。导入node的模块之前需要npm init
   在node开发中使用npm init会生成一个pakeage.json文件，这个文件主要是用来记录这个项目的详细信息的，它会将我们在项目开发中所要用到的包，以及项目的详细信息等记录在这个项目中。
 
+局部安装webpack
+目前，我们上面介绍使用的webpack是全局的webpack，如果我们想使用局部来打包呢？
+  因为一个项目往往依赖特定的webpack版本，全局的版本可能很这个项目的webpack版本不一致，导出打包出现问题。
+  所以通常一个项目，都有自己局部的webpack。
+
+  第一步，项目中需要安装自己局部的webpack
+    这里我们让局部安装webpack3.6.0
+    Vue CLI3中已经升级到webpack4，但是它将配置文件隐藏了起来，所以查看起来不是很方便。
+    安装指令：cd 到项目文件下 npm install webpack@3.6.0 --save-dev  （--save-dev是开发时依赖，项目打包后不需要继续使用的。）
+    生成node_modules文件夹及其相关文件
+
+  第二步，在package.json的scripts中定义自己的执行脚本。package.json中的scripts的脚本在执行时，会按照一定的顺序寻找命令对应的位置。
+    首先，会寻找本地的node_modules/.bin路径中对应的命令。如果没有找到，会去全局的环境变量中寻找。
+    在script中添加 "build": "webpack" 执行 npm run build 将会使用局部安装webpack 的 webpack 指令进行打包。
+    通过在package.json的scripts中定义其他的执行脚本 xxx ，可以通过 npm run xxx 执行对应脚本。
+
+
+什么是loader？
+loader是webpack中一个非常核心的概念。webpack用来做什么呢？
+  在上面的配置中主要是用webpack来处理我们写的js代码，并且webpack会自动处理js之间相关的依赖。
+  但是，在开发中我们不仅仅有基本的js代码处理，我们也需要加载css、图片，也包括一些高级的将ES6转成ES5代码，将TypeScript转成ES5代码，将scss、less转成css，将.jsx、.vue文件转成js文件等等。
+  对于webpack本身的能力来说，对于这些转化是不支持的。那怎么办呢？给webpack扩展对应的loader就可以啦。
+
+loader使用过程：
+  步骤一：通过npm安装需要使用的loader
+  步骤二：在webpack.config.js中的modules关键字下进行配置
+  大部分loader都可以在webpack的官网中找到对应的用法：https://webpack.docschina.org/loaders/
+
+
+css文件处理 – css-loader
+  为了实现css文件也一起打包到dist/bundle.js中 需要在入口main.js中依赖css模块 require('./css/normal.css');
+  为了实现css模块能够打包需要配置webpack.config.js文件。
+
+  按照官方配置webpack.config.js文件。
+  npm install --save-dev css-loader
+  npm install --save-dev style-loader
+  css-loader只负责加载css文件，但是并不负责将css具体样式嵌入到文档中。
+  还需要一个style-loader帮助我们处理。
+  注意：style-loader需要放在css-loader的前面。因为webpack在读取使用的loader的过程中，是按照从右向左的顺序读取的。
+
+遇到问题：
+  应该是我的node版本太高的原因，对css-loader和style-loader不指定版本安装时都是默认使用最新版本，
+  导致打包不成功，指定如下版本安装就可以，具体问题先不管了！！！
+  npm install --save-dev css-loader@2.0.2
+  npm install --save-dev style-loader@0.23.1
+
+
+
+
 
 -->
 <html lang="en">
