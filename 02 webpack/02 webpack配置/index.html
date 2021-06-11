@@ -2,7 +2,7 @@
 <!-- 
 如果每次使用webpack打包命令都需要写上入口和出口作为参数，就非常麻烦，
 有没有一种方法可以将这两个参数写到配置中，在运行时，直接读取，只使用webpack命令就可以实现打包呢？
-  当然可以，就是创建一个webpack.config.js文件，指定打包的入口文件和导出的文件路径和文件名称。
+  当然可以，就是创建一个##### webpack.config.js文件，指定打包的入口文件和导出的文件路径和文件名称。
 
   由于webpack.config.js文件需要用到获取项目文件路径，需要导入node的path模块。导入node的模块之前需要npm init
   在node开发中使用npm init会生成一个pakeage.json文件，这个文件主要是用来记录这个项目的详细信息的，它会将我们在项目开发中所要用到的包，以及项目的详细信息等记录在这个项目中。
@@ -15,12 +15,12 @@
   第一步，项目中需要安装自己局部的webpack
     这里我们让局部安装webpack3.6.0
     Vue CLI3中已经升级到webpack4，但是它将配置文件隐藏了起来，所以查看起来不是很方便。
-    安装指令：cd 到项目文件下 npm install webpack@3.6.0 --save-dev  （--save-dev是开发时依赖，项目打包后不需要继续使用的。）
+    安装指令：cd 到项目文件下##### npm install webpack@3.6.0 --save-dev  （--save-dev是开发时依赖，项目打包后不需要继续使用的。）
     生成node_modules文件夹及其相关文件
 
   第二步，在package.json的scripts中定义自己的执行脚本。package.json中的scripts的脚本在执行时，会按照一定的顺序寻找命令对应的位置。
     首先，会寻找本地的node_modules/.bin路径中对应的命令。如果没有找到，会去全局的环境变量中寻找。
-    在script中添加 "build": "webpack" 执行 npm run build 将会使用局部安装webpack 的 webpack 指令进行打包。
+    在script中添加#####  "build": "webpack" 执行 npm run build 将会使用局部安装webpack 的 webpack 指令进行打包。
     通过在package.json的scripts中定义其他的执行脚本 xxx ，可以通过 npm run xxx 执行对应脚本。
 
 
@@ -50,12 +50,68 @@ css文件处理 – css-loader
 遇到问题：
   应该是我的node版本太高的原因，对css-loader和style-loader不指定版本安装时都是默认使用最新版本，
   导致打包不成功，指定如下版本安装就可以，具体问题先不管了！！！
-  npm install --save-dev css-loader@2.0.2
-  npm install --save-dev style-loader@0.23.1
+  ##### npm install --save-dev css-loader@2.0.2
+  ##### npm install --save-dev style-loader@0.23.1
 
 
 less文件处理 – less-loader
-  npm install less@3.9.0 less-loader@4.1.0 --save-dev
+  ##### npm install less@3.9.0 less-loader@4.1.0 --save-dev
+
+
+图片文件处理 – url-loader
+  图片处理，我们使用url-loader来处理，依然先安装url-loader
+  ##### npm install url-loader@1.1.2 --save-dev
+
+  默认配置 limit: 8192, 
+  当图片小于8kb时，对图片进行base64编码；
+  当图片大于8kb时，需要安装file-loader。
+    ##### npm install file-loader@3.0.1 --save-dev
+    再次打包，就会发现dist文件夹下多了一个图片文件，是一个32位hash值，目的是防止名字重复
+    但是，真实开发中，我们可能对打包的图片名字有一定的要求
+    比如，将所有的图片放在一个文件夹中，跟上图片原来的名称，同时也要防止重复 
+      所以，我们可以在options中添加上如下选项：
+        img：文件要打包到的文件夹
+        name：获取图片原来的名字，放在该位置
+        hash:8：为了防止图片名称冲突，依然使用hash，但是我们只保留8位
+        ext：使用图片原来的扩展名
+        如：##### name: 'img/[name].[hash:8].[ext]'
+    但是，我们发现图片并没有显示出来，这是因为图片使用的路径不正确
+      默认情况下，webpack会将生成的路径直接返回给使用者
+      我们整个程序是打包在dist文件夹下的，所以这里我们需要在路径下再添加一个dist/
+        webpack.config.js文件 output 中添加##### publicPath: 'dist/'  真实开发中index.html也要打包到dist中则不需要这个配置
+
+
+ES6语法处理 babel-loader
+  webpack打包的js文件，发现写的ES6语法并没有转成ES5，那么就意味着可能一些对ES6还不支持的浏览器没有办法很好的运行我们的代码。
+  如果希望将ES6的语法转成ES5，那么就需要使用babel
+  ##### npm install --save-dev babel-loader@7 babel-core babel-preset-es2015
+
+  遇到问题：使用上面版本的babel-loader进行ES6语法转成ES5时，发现对css文件的导入不能使用es6 import语法，需要用CommonJS的require语法，但是js文件的导入又可以用import ！！！
+
+
+引入vue.js
+  在实际项目中也会使用vue的，所以并不是开发时依赖 不需要-dev
+  ##### npm install vue@2.5.21 --save
+
+  打包项目 – 错误信息
+    打包过程没有任何错误(因为只是多打包了一个vue的js文件而已)
+    但是运行程序，没有出现想要的效果，而且浏览器中有报错
+    [Vue warn]: You are using the runtime-only build of Vue where the template compiler is not available. 
+    Either pre-compile the templates into render functions, or use the compiler-included build.
+
+  这个错误说的是我们使用的是runtime-only版本的Vue，什么意思呢？
+    runtime-only和runtime-compiler的区别??????????   后续了解
+    runtime-only 代码中不可以有template。html中div挂载了vue实例，div相当于template。
+    runtime-compiler 代码中可以有template。因为compiler可以编译template。
+
+  修改webpack的配置，添加如下内容即可
+    resolve: {
+      alias: {
+        'vue$': 'vue/dist/vue.ems.js'
+      }
+    }
+
+
 
 
 -->
@@ -68,6 +124,9 @@ less文件处理 – less-loader
 </head>
 <body>
   <h1>02 webpack配置</h1>
+  <div id="app">
+    {{msg}}
+  </div>
 </body>
 </html>
 
