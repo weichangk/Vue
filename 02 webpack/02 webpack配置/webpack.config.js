@@ -52,6 +52,11 @@ module.exports = {
           }
         }
       },
+      // 为了使.vue文件能被正确的加载需要安装vue-loader和vue-template-compiler 并添加vue-loader配置
+      {
+        test: /\.vue$/,
+        use: ['vue-loader']
+      }
     ],
   },
   //默认使用的是runtime-only版本的Vue 通过配置改为 runtime-compiler版本

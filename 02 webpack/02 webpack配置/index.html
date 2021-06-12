@@ -111,8 +111,46 @@ ES6语法处理 babel-loader
       }
     }
 
+在SPA(simple page web applicatin) 单页面应用 一般只有一个html（index.html）文件。考虑下面问题：
+  如果我们希望将data中的数据显示在界面中，就必须是修改index.html
+  如果我们后面自定义了组件，也必须修改index.html来使用组件
+  但是html模板在之后的开发中，我并不希望手动的来频繁修改
 
+怎么解决上面问题呢？
+定义template属性：
+  在前面的Vue实例中，我们定义了el属性，用于和index.html中的#app进行绑定，让Vue实例之后可以管理它其中的内容
+  这里，我们可以将div元素中的{{message}}内容删掉，只保留一个基本的id为app的div的元素
+  但是如果我依然希望在其中显示{{message}}的内容，应该怎么处理呢？可以再定义一个template属性
 
+那么，el和template模板的关系是什么呢？
+  el用于指定Vue要管理的DOM，可以帮助解析其中的指令、事件监听等等。
+  如果Vue实例中同时指定了template，那么template模板的内容会替换掉挂载的对应el的模板。
+
+  这样做有什么好处呢？
+    这样做之后我们就不需要在以后的开发中再次操作index.html，只需要在template中写入对应的标签即可
+
+  但是，书写在vue实例中写template模块非常麻烦怎么办呢？
+    将vue实例进行组件抽取分离，如：main.js 中的 3. 4. 步骤。
+
+  .vue文件封装处理。分成三部分书写：template、script、style，结构变得非常清晰。
+    但是此时 .vue文件不能被正确的加载
+    需要安装vue-loader和vue-template-compiler
+    ##### npm install vue-loader@13.0.0 vue-template-compiler@2.5.21 --save-dev
+    并修改webpack.config.js的配置文件
+    {
+      test: /\.vue$/,
+      use: ['vue-loader']
+    }
+
+    问题：vue-loader 14版本后还需要使用plugin插件。如果不想配置该插件可以在package.json中修改vue-loader更低的版本。重新npm init。
+    
+如果不想写文件扩展名可以在webpack.config.js文件resolve中添加配置，如：extensions: ['.js', '.css', '.vue'],
+  
+
+clone 文件后在安装了node的条件下
+1. npm install webpack@3.6.0 --save-dev
+2. npm run build 
+进行打包
 
 -->
 <html lang="en">
@@ -125,7 +163,7 @@ ES6语法处理 babel-loader
 <body>
   <h1>02 webpack配置</h1>
   <div id="app">
-    {{msg}}
+    <!-- {{msg}} -->
   </div>
 </body>
 </html>
