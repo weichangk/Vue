@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!-- 
+在02 webpack配置的基础上使用plugin
+
+plugin是什么？
+  plugin是插件的意思，通常是用于对某个现有的架构进行扩展
+  webpack中的插件，就是对webpack现有功能的各种扩展，比如打包优化，文件压缩等等。
+
+loader和plugin区别
+  loader主要用于转换某些类型的模块，它是一个转换器。
+  plugin是插件，它是对webpack本身的扩展，是一个扩展器。
+
+plugin的使用过程：
+  步骤一：通过npm安装需要使用的plugins(某些webpack已经内置的插件不需要安装)
+  步骤二：在webpack.config.js中的plugins中配置插件。
+
+1. 添加版权的Plugin
+  为打包的文件添加版权声明，该插件名字叫BannerPlugin，属于webpack自带的插件。
+  修改webpack.config.js的文件：
+  const webpack = require('webpack');
+
+  module.export = {
+    ...
+    plugins: [
+      ...
+      new webpack.BannerPlugin('版权归 weichangk 所有！')
+    ]
+  }
+
+2. 打包html的plugin
+  在前面的配置中，index.html文件是存放在项目的根目录下的。
+  在真实发布项目时，发布的是dist文件夹中的内容，但是dist文件夹中如果没有index.html文件，那么打包的js等文件也就没有意义了。
+  所以，我们需要将index.html文件打包到dist文件夹中，这个时候就可以使用htmlWebpackPlugin插件
+
+  htmlWebpackPlugin插件可以为我们做这些事情：
+    自动生成一个index.html文件(可以指定模板来生成)
+    将打包的js文件，自动通过script标签插入到body中
+  安装htmlWebpackPlugin插件
+    ###### npm install html-webpack-plugin@3.2.0 --save-dev
+  使用插件，修改webpack.config.js文件中plugins部分的内容如下：   
+    const htmlWebpackPlugin = require('html-webpack-plugin')
+    module.export = {
+      ...
+      plugins: [
+        ...
+        new htmlWebpackPlugin({
+          template: 'index.html'//这里的template表示根据什么模板来生成index.html
+        })
+      ]
+    }   
+    另外，需要删除之前在output中添加的publicPath属性，因为之前index.html没有被打包到dist文件下，需要指定publicPath: 'dist/'引用
+    还有index.html文件的对打包好的bundle.js文件引用可以去掉了。
+
+
+3. js压缩的Plugin
+  在项目发布之前，我们必然需要对js等文件进行压缩处理
+  使用一个第三方的插件uglifyjs-webpack-plugin，并且版本号指定1.1.1，和CLI2保持一致
+  ###### npm install uglifyjs-webpack-plugin@1.1.1 --save-dev
+  修改webpack.config.js文件，使用插件：
+    const uglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin')
+    module.export = {
+      ...
+      plugins: [
+        ...
+        new uglifyjsWebpackPlugin()
+      ]
+    }   
+  查看打包后的bunlde.js文件，是已经被压缩过了。但是添加版权的Plugin将无效了
+  
+4. 搭建本地服务器
+  在开发的时候需要搭建本地服务器进行自动更新修改方便调试，不需要每次修改后npm run build重新打包再看修改效果，大大提高开发效率。
+  本地服务器的作用是服务某个项目文件夹，如dist文件夹，实时监听代码的改变并重新编译存到内存而不是编译打包到dist文件夹中。确认开发修改完成只需要执行一次npm run build编译打包即可。
+
+  webpack提供了一个可选的本地开发服务器，这个本地服务器基于node.js搭建，内部使用express框架，可以实现我们想要的让浏览器自动刷新显示我们修改后的结果。
+  不过它是一个单独的模块，在webpack中使用之前需要先安装它
+  ###### npm install --save-dev webpack-dev-server@2.9.1  （版本对应webpack@3.6.0）
+
+  devserver也是作为webpack中的一个选项，选项本身可以设置如下属性：
+    contentBase：为哪一个文件夹提供本地服务，默认是根文件夹，我们这里要填写./dist
+    port：端口号 （默认8080）
+    inline：页面实时刷新
+    historyApiFallback：在SPA页面中，依赖HTML5的history模式
+
+  webpack.config.js文件修改配置本地服务器
+    module.export = {
+      ...
+      devServer: {
+        contentBase: './dist',
+        port: 54321,
+        inline: true
+      },
+    } 
+
+  package.json文件修改指定 npm run dev 启动本地服务器 
+    "scripts": {
+      ...
+      "dev": "webpack-dev-server"
+    },
+  "dev": "webpack-dev-server --open" 配置时 执行npm run dev将自动打开浏览器
+
+5. 配置文件的分离
+  根据开发和发布对配置的依赖不同进行分离，为开发和发布配置特定的配置依赖环境
+
+  对webpack.config.js配置文件分离到build文件夹下的base.config.js dev.config.js prod.config.js
+
+  为了使分离的配置文件能够合并需要安装插件
+  ###### npm install webpack-merge@4.1.5 --sava-dev
+  
+  在dev.config.js prod.config.js
+  导入 
+  const webpackMerge = require('webpack-merge');
+  const baseConfig = require('./base.config');
+  module.exports = webpackMerge(baseConfig, {
+    ...
+  })
+  进行合并
+
+  之后webpack.config.js可以删除了。"build": "webpack", "dev": "webpack-dev-server --open" 是默认使用webpack.config.js
+  需要修改package.json 指定配置文件路径
+  "scripts": {
+    "build": "webpack --config ./build/prod.config.js",
+    "dev": "webpack-dev-server --open ./build/dev.config.js"
+  },
+
+  由于配置文件在build文件夹中所以base.config.js文件的output配置也要相应修改
+  output: {
+    path: path.resolve(__dirname, '../dist'),
+  },
+
+
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <h1>03 webpack plugin</h1>
+  <div id="app">
+  </div>
+</body>
+</html>
+
+
+<!-- <script src="./dist/bundle.js"></script> -->
+
