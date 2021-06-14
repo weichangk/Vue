@@ -9,6 +9,12 @@
 
 3. 对象字面量增强写法
 
+4. 箭头函数（和c# lambda 一样）
+    4.1 箭头函数基本使用
+    4.2 箭头函数参数和放回值
+    4.3 箭头函数中this的使用
+        向外层作用域中, 一层层查找this, 直到有this的定义.
+    
 -->
 <html lang="en">
 <head>
@@ -176,4 +182,117 @@
       //
     }
   }
+
+
+// 4. 箭头函数（和c# lambda 一样）
+// 4.1 箭头函数基本使用
+  // 箭头函数: 也是一种定义函数的方式
+  // 1.定义函数的方式: function
+  const aaa = function () {
+
+  }
+
+  // 2.对象字面量中定义函数
+  const obj4_1 = {
+    bbb() {
+
+    }
+  }
+
+  // 3.ES6中的箭头函数
+  // const ccc = (参数列表) => {
+  //
+  // }
+  const ccc = () => {
+
+  }
+// 4.2 箭头函数参数和放回值
+  // 1.参数问题:
+  // 1.1.放入两个参数
+  const sum = (num1, num2) => {
+    return num1 + num2
+  }
+
+  // 1.2.放入一个参数
+  const power = num => {
+    return num * num
+  }
+
+  // 2.函数中
+  // 2.1.函数代码块中有多行代码时
+  const test = () => {
+    // 1.打印Hello World
+    console.log('Hello World');
+
+    // 2.打印Hello Vuejs
+    console.log('Hello Vuejs');
+  }
+
+  // 2.2.函数代码块中只有一行代码
+  // const mul = (num1, num2) => {
+  //   return num1 + num2
+  // }
+  const mul = (num1, num2) => num1 * num2
+  console.log(mul(20, 30));
+
+  // const demo = () => {
+  //   console.log('Hello Demo');
+  // }
+  const demo = () => console.log('Hello Demo')
+  console.log(demo());
+
+// 4.3 箭头函数中this的使用
+  // 什么时候使用箭头
+  // setTimeout(function () {
+  //   console.log(this);
+  // }, 1000)
+  //
+  // setTimeout(() => {
+  //   console.log(this);
+  // }, 1000)
+
+  // 问题: 箭头函数中的this是如何查找的了?
+  // 答案: 向外层作用域中, 一层层查找this, 直到有this的定义.
+  // const obj = {
+  //   aaa() {
+  //     setTimeout(function () {
+  //       console.log(this); // window
+  //     })
+  //
+  //     setTimeout(() => {
+  //       console.log(this); // obj对象
+  //     })
+  //   }
+  // }
+  //
+  // obj.aaa()
+
+
+  const obj4_3 = {
+    aaa() {
+      setTimeout(function () {
+        setTimeout(function () {
+          console.log(this); // window
+        })
+
+        setTimeout(() => {
+          console.log(this); // window
+        })
+      })
+
+      setTimeout(() => {
+        setTimeout(function () {
+          console.log(this); // window
+        })
+
+        setTimeout(() => {
+          console.log(this); // obj4_3
+        })
+      })
+    }
+  }
+
+  obj4_3.aaa()
+
+
 </script>
