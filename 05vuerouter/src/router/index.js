@@ -1,7 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import User from '../views/User.vue'
+// import User from '../views/User.vue'
+const User = () => import('../views/User.vue')
+// 路由的懒加载
+const LazyTest = () => import('../views/LazyTest.vue')
+const HomeNews = () => import('../views/HomeNews.vue')
+const HomeMsgs = () => import('../views/HomeMsgs.vue')
 // 导入组件
 
 // 1.注入路由插件
@@ -13,15 +18,40 @@ const routes = [
     // 路由的默认路径
     // 默认情况下, 进入网站的首页, 我们希望<router-view>渲染首页的内容
     path: '/',
+    // name: 'Home',
+    // component: Home
+    redirect: 'home'
+  },
+  {
+    path: '/home',
     name: 'Home',
-    component: Home
+    component: Home,
+    // 嵌套路由
+    children: [
+      {
+        // 嵌套路由默认路由
+        path: '',
+        redirect: 'homeMsgs'
+      },
+      {
+        path: 'homeNews',
+        name: 'HomeNews',
+        component: HomeNews
+      },
+      {
+        path: 'homeMsgs',
+        name: 'HomeMsgs',
+        component: HomeMsgs
+      }
+    ]
   },
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    // 路由的懒加载
+    // 路由级代码拆分
+    // 生成一个单独的chunk (about.[hash].js)
+    // 当路由被访问时被惰性加载。
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
@@ -29,6 +59,12 @@ const routes = [
     path: '/user/:userId',
     name: 'User',
     component: User
+  },
+  {
+    path: '/lazyTest',
+    name: 'LazyTest',
+    // 路由的懒加载
+    component: LazyTest
   }
 ]
 

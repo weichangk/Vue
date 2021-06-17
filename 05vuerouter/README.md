@@ -123,6 +123,58 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## 动态路由
 - 在某些情况下，一个页面的path路径可能是不确定的，比如path路径的拼接由组件data中的数据或计算属性决定。
 
+## $router
+- router是VueRouter的一个对象，通过Vue.use(VueRouter)和VueRouter构造函数得到一个router的实例对象，这个对象中是一个全局的对象，他包含了所有的路由包含了许多关键的对象和属性。如路由的跳转方法，钩子函数等。
+- $router.push({path:'home'});本质是向history栈中添加一个路由，在我们看来是 切换路由，但本质是在添加一个history记录。
+- $router.replace({path:'home'});//替换路由，没有历史记录。
+## $route
+- route是一个跳转的路由对象，每一个路由都会有一个route对象，是一个局部的对象，可以获取对应的包括name、meta、path、hash、query、params、fullPath、matched、redirectedFrom等。
+- $route表示导出的路由对象router中的routers路由数组中处于活跃状态的路由。
+- $route.params 对象，包含路由中的动态片段和全匹配片段的键值对。$route.param.xxx 可以获取路由参数。
+- $route.path 字符串，等于当前路由对象的路径，会被解析为绝对路径，如 "/home/news" 。
+- $route.query 对象，包含路由中查询参数的键值对。例如，对于 /home/news/detail/01?favorite=yes ，会得到$route.query.favorite == 'yes' 。
+- $route.router 路由规则所属的路由器（以及其所属的组件）。
+- $route.matched 数组，包含当前匹配的路径中所包含的所有片段所对应的配置参数对象。   
+- $route.name 当前路径的名字，如果没有使用具名路径，则名字为空。
+
+## 路由的懒加载
+- 当打包构建应用时，Javascript 包会变得非常大，影响页面加载。
+- 如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+- 我们知道路由中通常会定义很多不同的页面。这个页面最后被打包在哪里呢? 一般情况下, 是放在一个js文件中。但是, 页面这么多放在一个js文件中, 必然会造成这个页面非常的大。如果我们一次性从服务器请求下来这个页面, 可能需要花费一定的时间, 甚至用户的电脑上还出现了短暂空白的情况。如何避免这种情况呢? 使用路由懒加载就可以了。
+- 路由懒加载做了什么？
+  - 路由懒加载的主要作用就是将路由对应的组件打包成一个个的js代码块。
+  - 只有在这个路由被访问到的时候, 才加载对应的组件。
+  - 路由级代码拆分
+  - 生成一个单独的chunk (about.[hash].js) 
+  - 当路由被访问时被惰性加载。
+
+- 懒加载的方式
+  - AMD写法 const About = resolve => require(['../components/About.vue'], resolve);
+  - ES6写法 const Home = () => import('../components/Home.vue')
+
+## 嵌套路由
+- 比如在home页面中, 我们希望通过/home/news和/home/message访问一些内容。/home/news和/home/message 是嵌套在home路由中的。
+- 实现嵌套路由步骤
+  - 创建对应的子组件。
+  - 在父级路由映射children:中配置对应的子路由。
+  - 在父组件模板内部使用 router-link 和 router-view 标签来实现子组件切换。
+  - 可在children:中配置默认子路由。
+
+## 路由传递参数的方式
+- 传递参数主要有两种类型: params和query
+- params的类型
+  - 配置路由格式: /router/:id
+  - 传递的方式: 在path后面跟上对应的值
+  - 传递后形成的路径: /router/123, /router/abc
+- query的类型
+  - 配置路由格式: /router, 也就是普通配置
+  - 传递的方式: 对象中使用query的key作为传递方式。如 router-link :to="{path: '/profile', query: {name: ''weichangk, age: 25}}">
+
+
+
+
+
+
 
 
 
