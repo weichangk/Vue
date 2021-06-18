@@ -27,6 +27,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 # vue-router 测试项目
   1. 该项目使用vue-cli3创建，使用了vue-router组件。
+  2. Vue Router 官方文档 https://router.vuejs.org/zh/installation.html
 
 ## 什么是路由？
  1. 路由（routing）就是通过互联的网络把信息从源地址传输到目的地址的活动. --- 维基百科
@@ -166,9 +167,34 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
   - 配置路由格式: /router/:id
   - 传递的方式: 在path后面跟上对应的值
   - 传递后形成的路径: /router/123, /router/abc
+  - 获取参数：如 $route.params.id
 - query的类型
   - 配置路由格式: /router, 也就是普通配置
-  - 传递的方式: 对象中使用query的key作为传递方式。如 router-link :to="{path: '/profile', query: {name: ''weichangk, age: 25}}">
+  - 传递的方式: 对象中使用query的key作为传递方式。
+    - 传递参数方式一: router-link 如 router-link :to="{path: '/profile', query: {name: ''weichangk, age: 25}}"
+    - 传递参数方式二: JavaScript代码 在methods:{xxx(){this.$router.push({path: '/url', query:{name: 'weichangk'}})}}
+  - 获取参数：如 $route.query.name
+
+## 导航守卫
+- https://router.vuejs.org/zh/guide/advanced/navigation-guards.html
+- vue-router 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。有多种机会植入路由导航过程中：全局的, 单个路由独享的, 或者组件级的。
+- 全局前置守卫 router.beforeEach
+- 全局后置钩子 router.afterEach
+- 路由独享的守卫 beforeEnter
+- 组件内的守卫 beforeRouteEnter beforeRouteUpdate beforeRouteLeave
+
+## keep-alive
+- https://www.jianshu.com/p/9523bb439950
+- keep-alive 是 Vue 内置的一个组件，可以使被包含的组件保留状态，或避免重新渲染
+- 它们有两个非常重要的属性：include - 字符串或正则表达，只有匹配的组件会被缓存。exclude - 字符串或正则表达式，任何匹配的组件都不会被缓存
+- router-view 也是一个组件，如果直接被包在 keep-alive 里面，所有路径匹配到的视图组件都会被缓存
+- 通过 created 和 destroyed 生命周期钩子来验证
+- activated和deactivated生命周期钩子在keep-alive中才有效
+
+
+
+
+
 
 
 
