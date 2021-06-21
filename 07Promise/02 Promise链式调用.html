@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- 
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 1
+    new Promise((resolve, reject) => {
+      console.log("1")
+      setTimeout(() => {
+        resolve("1")
+        reject("error 1")
+      }, 1000)
+    }).then(res => {
+      console.log("2")
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject("error 2")
+          resolve(res + "1")
+        }, 1000)
+      })
+    }).then(res => {
+      console.log("3")
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resole(res + "1")
+        }, 1000)
+      })
+    }).then(res => {
+      console.log(res)
+    }, error => {
+      console.log(error)
+    })
+
+
+    // 2
+    new Promise((resolve, reject) => {
+      console.log("a")
+      setTimeout(() => {
+        resolve("a")
+      }, 1000)
+    }).then(res => {
+      console.log("b")
+      //return Promise.resolve(res + "a")
+      return res + "a" //Promise.resolve可省略
+    }).then(res => {
+      console.log("c")
+      console.log(res)
+      return Promise.reject("error c")
+      // throw "error c"
+    }).then(res => {
+      console.log(res)
+    }).catch(error => {
+      console.log(error)
+    })
+  </script>
+</body>
+
+</html>

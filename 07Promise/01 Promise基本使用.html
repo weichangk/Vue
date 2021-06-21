@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!-- 
+https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+
+-->
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+
+    // new -> 构造函数(1.保存了一些状态信息  2.执行传入的函数)
+    // 在执行传入的回调函数时, 会传入两个参数, resolve, reject.本身又是函数
+
+    // 写法1
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 成功的时候调用resolve
+        resolve('success1') // 执行resolve 将不执行 reject
+        // 失败的时候调用reject
+        reject('error1')
+      }, 1000)
+      console.log("xxxx");
+    }).then((data) => {
+      console.log(data);
+    }).catch((err) => {
+      console.log(err);
+    })
+
+    // 写法2
+    let myFirstPromise = new Promise(function (resolve, reject) {
+      //当异步代码执行成功时，我们才会调用resolve(...), 当异步代码失败时就会调用reject(...)
+      //在本例中，我们使用setTimeout(...)来模拟异步代码，实际编码时可能是XHR请求或是HTML5的一些API方法.
+      setTimeout(function () {
+        //resolve("success2"); //代码正常执行！
+        reject('error2')//失败的时候调用reject
+      }, 2000);
+    });
+
+    myFirstPromise.then(function (successMessage) {
+      //successMessage的值是上面调用resolve(...)方法传入的值.
+      //successMessage参数不一定非要是字符串类型，这里只是举个例子
+      console.log(successMessage);
+    });
+
+    myFirstPromise.catch(function (errorMessage) {
+      console.log(errorMessage);
+    });
+
+    // 写法3
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('error3')
+      }, 3000)
+    }).then((data) => {
+      console.log(data);
+    }, (err) => {
+      console.log(err);
+    })
+  </script>
+</body>
+
+</html>
