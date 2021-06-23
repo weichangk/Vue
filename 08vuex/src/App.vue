@@ -8,12 +8,12 @@
     <Vuex1></Vuex1>
     <hr>
 
-    <!-- 通过 $store.state 直接使用 state 中的对象-->
     <p>Vuex.Store.state.counter: {{$store.state.counter}}</p>
     <p>App computed getMore30PriceBook: {{getMore30PriceBook}}</p>
     <p>Vuex.store.getters getMore40PriceBook: {{$store.getters.getMore40PriceBook}}</p>
     <p>Vuex.store.getters getMore40PriceBookLength: {{$store.getters.getMore40PriceBookLength}}</p>
     <p>Vuex.store.getters getBookByPrice(10): {{$store.getters.getBookByPrice(10)}}</p>
+    <p>Vuex.Store.state.admin: {{$store.state.admin}}</p>
   </div>
 </template>
 
