@@ -14,6 +14,7 @@
     <p>Vuex.store.getters getMore40PriceBookLength: {{$store.getters.getMore40PriceBookLength}}</p>
     <p>Vuex.store.getters getBookByPrice(10): {{$store.getters.getBookByPrice(10)}}</p>
     <p>Vuex.Store.state.admin: {{$store.state.admin}}</p>
+    <p>Vuex.modules: {{$store.state.a.name}} {{$store.state.b.name}}</p>
   </div>
 </template>
 

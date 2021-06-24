@@ -7,6 +7,22 @@ import {
   PAYLOADCOMMIT
 } from '../store/mutations-type.js'
 
+const moduleA = {
+  state: {
+    name: 'moduleA state'
+  },
+  mutations: {},
+  getters: {},
+  actions: {},
+}
+const moduleB = {
+  state: {
+    name: 'moduleB state'
+  },
+  mutations: {},
+  getters: {},
+  actions: {},
+}
 // Vuex.Store 应用程序开发的状态管理模式
 export default new Vuex.Store({
   // 存放数据的地方。
@@ -114,8 +130,23 @@ export default new Vuex.Store({
       setTimeout(() => {
         context.commit('updateAdminAge', payload);
       }, 1000)
-    }
+    },
+
+    // 使用 action 对 mutations 进行异步操作 并回调。Action返回Promise 
+    actionA(context, payload) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          context.commit('updateAdminAge', payload);
+          resolve('actionA updateAdminAge success');
+        }, 2000)
+      })
+    },
+
   },
+
+  // Vuex 允许将 Vuex.store 分割成模块（module）
   modules: {
+    a: moduleA,
+    b: moduleB
   }
 })

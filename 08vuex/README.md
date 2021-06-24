@@ -28,6 +28,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Vuex核心概念
 - Vuex状态管理模式图 https://vuex.vuejs.org/vuex.png
+- State Getters Mutation Action Module 各个模块可以从store index文件中分离出来再导入到store index文件中。项目结构更加清晰。
 
 #### State
 - 存放数据的地方。
@@ -48,10 +49,15 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Action类似于Mutation, 但是是用来代替Mutation进行异步操作的
 - 通常情况下, Vuex要求我们Mutation中的方法必须是同步方法。当我们使用devtools时, 可以devtools可以帮助我们捕捉mutation的快照，但是如果是异步操作, 那么devtools将不能很好的追踪这个操作什么时候会被完成。
 - Action 通过 store.dispatch 方法触发 this.$store.dispatch()
-- Actions 支持与 Mutation 同样的载荷方式和对象方式进行传参。
+- Action 支持与 Mutation 同样的载荷方式和对象方式进行传参。
+- Action返回Promise 回调。
 
 #### Module
-- Vuex 允许将 Vuex.store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块
+- Vue使用单一状态树,那么也意味着很多状态都会交给Vuex来管理。
+- 当应用变得非常复杂时，store对象就有可能变得相当臃肿。
+- Vuex 允许将 Vuex.store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块。
+- 导出的Vuex.Store 的 modules 进行配置。使用 $store.state.moduleName.xxx 访问 Vuex.store 模块成员
+
 
 ### Mutation响应规则
 - Vuex的store中的state是响应式的, 当state中的数据发生改变时, Vue组件会自动更新

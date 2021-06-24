@@ -12,6 +12,7 @@
     <button @click="deleteAdminAttribute">deleteAdminAttribute</button>
     <button @click="deleteAdminAttributeResponse">deleteAdminAttributeResponse</button>
     <button @click="actionUpdateAdminAge">actionUpdateAdminAge</button>
+    <button @click="actionA">actionA</button>
   </div>
 </template>
 
@@ -83,7 +84,19 @@
           type: 'actionUpdateAdminAge',
           age: 10,
         })
-      }
+      },
+
+      // store.dispatch 方法触发 action 并执行回调
+      actionA() {
+        this.$store.dispatch({
+          type: 'actionA',
+          age: 20,
+        }).then((result) => {
+          console.log(result)
+        }).catch((err) => {
+          console.log(err)
+        });
+      },
     }
   }
 </script>
