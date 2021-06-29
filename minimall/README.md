@@ -31,7 +31,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 引入axios
 - 首页导航封装
 - 请求首页数据
-- 添加轮播图组件
+- 首页添加轮播图组件
+- 首页添加推荐信息组件
+- 首页添加特色信息组件
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法
