@@ -34,6 +34,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 首页添加轮播图组件
 - 首页添加推荐信息组件
 - 首页添加特色信息组件
+- TabControl组件封装
+- 商品数据按类型页数请求保存展示
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法
