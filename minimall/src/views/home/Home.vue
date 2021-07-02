@@ -4,8 +4,10 @@
     <SwiperView :banners="banners"></SwiperView>
     <RecommendView :recommends="recommends"></RecommendView>
     <FeatureView/>
-    <TabControl :titles="['流行', '新款', '精选']" class="tab-control"></TabControl>
-    <GoodsList :goods="goods['pop'].list"></GoodsList>
+    <TabControl :titles="['流行', '新款', '精选']" 
+                class="tab-control"
+                @tabClick="tabClick"></TabControl>
+    <GoodsList :goods="showGoods"></GoodsList>
 
   </div>
 </template>
@@ -32,7 +34,14 @@
           'pop': {page: 0, list: []},//流行
           'new': {page: 0, list: []},//新款
           'sell': {page: 0, list: []},//精选
-        }
+        },
+        currentType: 'pop',//商品类型
+      }
+    },
+    computed: {
+      showGoods() {
+        /*根据商品类型显示商品*/
+        return this.goods[this.currentType].list;
       }
     },
     components: {
@@ -54,6 +63,7 @@
 
     },
     methods: {
+      /*网络请求相关*/
       getHomeMultidata() {
         getHomeMultidata().then((result) => {
           this.banners = result.data.banner.list;
@@ -66,10 +76,27 @@
         const page = this.goods[type].page + 1;//获取第几页商品
         //按商品类型，页数请求数据  
         getHomeGoods(type, page).then((result) => {     
-          goods[type].list.push(...result.data.list);//将商品数据一个个追加，取代for遍历      
-          goods[type].page +=1;//跳到下一页
+          this.goods[type].list.push(...result.data.list);//将商品数据一个个追加，取代for遍历      
+          this.goods[type].page +=1;//跳到下一页
         }).catch((err) => {     
         });
+      },
+
+
+      /*事件监听相关*/
+      /*tabcontrol点击切换商品类型*/
+      tabClick(index) {
+        switch(index) {
+          case 0:
+            this.currentType ="pop";
+            break;
+          case 1:
+            this.currentType ="new";
+            break;
+          case 2:
+            this.currentType ="sell";
+            break;
+        }
       }
     }
   }
@@ -96,5 +123,8 @@
     /*设置滚动时的置顶高度*/
     position: sticky;
     top: 44px;
+
+    /*设置滚动时tab-control不被覆盖*/
+    z-index: 9;
   }
 </style>

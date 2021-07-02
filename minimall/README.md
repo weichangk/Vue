@@ -35,7 +35,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 首页添加推荐信息组件
 - 首页添加特色信息组件
 - TabControl组件封装
-- 商品数据按类型页数请求保存展示
+- 商品数据按类型页数请求 保存 展示 类型切换
+- 引入better-scroll https://github.com/ustbhuangyi/better-scroll npm install better-scorll --save
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法

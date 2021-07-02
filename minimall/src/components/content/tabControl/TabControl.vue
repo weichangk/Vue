@@ -27,6 +27,7 @@
     methods: {
       itemClick(index) {
         this.currentIndex = index;
+        this.$emit("tabClick", index); //tabcontrol点击切换商品类型
       }
     }
   }
