@@ -1,8 +1,17 @@
 import axios from 'axios'
 
+function getBaseURL() {
+  try {
+    var baseURL = require("./baseurl")
+    return baseURL.url;
+  } catch (e) {
+    return "http://123.207.32.32:8000/";//联系coderwhy老师获取新接口！
+  }
+}
+
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'http://123.207.32.32:8000',
+    baseURL: getBaseURL(),
     timeout: 5000
   })
 

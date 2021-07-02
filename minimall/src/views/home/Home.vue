@@ -65,12 +65,9 @@
       getHomeGoods(type) {
         const page = this.goods[type].page + 1;//获取第几页商品
         //按商品类型，页数请求数据  
-        getHomeGoods(type, page).then((result) => {
-                   console.log(result)         
-          goods[type].list.push(...result.data.list);//将商品数据一个个追加，取代for遍历
-          
+        getHomeGoods(type, page).then((result) => {     
+          goods[type].list.push(...result.data.list);//将商品数据一个个追加，取代for遍历      
           goods[type].page +=1;//跳到下一页
-          console.log(goods[type].list)
         }).catch((err) => {     
         });
       }
