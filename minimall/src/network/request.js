@@ -3,7 +3,7 @@ import axios from 'axios'
 function getBaseURL() {
   try {
     var baseURL = require("./baseurl")
-    return baseURL.url;
+    return baseURL.baseURL;
   } catch (e) {
     return "http://123.207.32.32:8000/";//联系coderwhy老师获取新接口！
   }
