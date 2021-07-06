@@ -37,6 +37,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - TabControl组件封装
 - 商品数据按类型页数请求 保存 展示 类型切换
 - 引入better-scroll https://github.com/ustbhuangyi/better-scroll npm install better-scroll@1.13.2 --save
+- Scroll组件封装使用
+- 回到顶部BackTop组件封装使用
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法
