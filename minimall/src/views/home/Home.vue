@@ -1,18 +1,23 @@
 <template>
   <div id="home">
-    <NavBar class="home-nav"><div slot="center">购物街</div></NavBar>
+    <NavBar class="homeNav"><div slot="center">购物街</div></NavBar>
+    <!--tabControl置顶默认不显示-->
+    <tabControl :titles="['流行', '新款', '精选']"
+                 @tabClick="tabClick"
+                 ref="tabControl1"
+                 class="tabControl" v-show="isTabFixed"/>
     <Scroll class="content"
             ref="scroll"
             :probeType="3"
             @scroll="contentScroll"
             :pullUpLoad="true"
             @pullingUp="loadMore">
-      <SwiperView :banners="banners"></SwiperView>
+      <SwiperView :banners="banners" @swiperImageLoad="swiperImageLoad"></SwiperView>
       <RecommendView :recommends="recommends"></RecommendView>
       <FeatureView/>
       <TabControl :titles="['流行', '新款', '精选']" 
-                  class="tab-control"
-                  @tabClick="tabClick"></TabControl>
+                  @tabClick="tabClick"
+                  ref="tabControl2"></TabControl>
       <GoodsList :goods="showGoods"></GoodsList>
     </Scroll>
     <BackTop @click.native="backTopClick" v-show="isShowBackTop"></BackTop><!--组件不能直接监听click事件，需要Click.native-->
@@ -30,6 +35,7 @@
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goods/GoodsList'
   import BackTop from 'components/content/backTop/BackTop'
+  import {debounce} from "common/utils";
 
   export default {
     name: 'Home',
@@ -68,6 +74,18 @@
       GoodsList,
       BackTop,
     },
+    activated() {
+      //虽然router-view使用了keep-alive包装，但是由于使用了BScroll的问题，存在偶尔无法准确记录上一次离开时的位置状态
+      //需要通过activated deactivated 使用和记录 scroll.y
+      
+      //进入组件时使用离开时的BScroll的y位置
+      this.$refs.scroll.scrollTo(0, this.saveY, 0)
+      this.$refs.scroll.refresh()
+    },
+    deactivated() {
+      //离开组件时记录上一次BScroll的y位置
+      this.saveY = this.$refs.scroll.getScrollY()
+    },
     created() {
       this.getHomeMultidata();
 
@@ -76,7 +94,30 @@
       this.getHomeGoods('new');
       this.getHomeGoods('sell');
 
+    },
+    mounted() {
+      /*
+      1. 解决首页中可滚动区域有时无法滚动完整的问题
+      Better-Scroll在决定有多少区域可以滚动时, 是根据scrollerHeight属性决定
+      scrollerHeight属性是根据放Better-Scroll的content中的子组件的高度
+      但是我们的首页中, 刚开始在计算scrollerHeight属性时, 是没有将图片计算在内的，所以计算出来的告诉是错误的
+      后来图片加载进来之后有了新的高度, 但是scrollerHeight属性并没有进行更新
 
+      监听每一张图片是否加载完成, 只要有一张图片加载完成了, 执行一次refresh()
+      将GoodsListItem.vue中的事件传入到Home.vue中
+      因为涉及到非父子组件的通信, 所以这里我们选择了**事件总线**
+      bus ->总线
+      Vue.prototype.$bus = new Vue()
+      this.bus.emit('事件名称', 参数)
+      this.bus.on('事件名称', 回调函数(参数)
+
+      2. 发现打开浏览器进入首页可以滑动，但切换到手机模式就本不能滑动了，需要刷新一次浏览器才行！
+      */
+      // 图片加载完成的事件监听
+      const refresh = debounce(this.$refs.scroll.refresh, 50);//防抖，防止短时间内重复执行refresh。延时50ms后不被再次调用才执行调用
+      this.$bus.$on('itemImageLoad', () => {
+        refresh();//刷新
+      })
     },
     methods: {
       /*网络请求相关*/
@@ -95,8 +136,8 @@
           this.goods[type].list.push(...result.data.list);//将商品数据一个个追加，取代for遍历      
           this.goods[type].page +=1;//跳到下一页
 
-          // 完成上拉加载更多
-          this.$refs.scroll.finishPullUp()
+          // 完成滑动加载更多，允许下次滑动再次触发事件
+          this.$refs.scroll.finishPullUp();
         }).catch((err) => {     
         });
       },
@@ -116,6 +157,8 @@
             this.currentType ="sell";
             break;
         }
+        this.$refs.tabControl1.currentIndex = index;//用于tabControl置顶显示
+        this.$refs.tabControl2.currentIndex = index;
       },
       backTopClick() {
         this.$refs.scroll.scrollTo(0, 0);// 回到顶部
@@ -125,6 +168,7 @@
         this.isShowBackTop = (-position.y) > 1000
 
         // 2.决定tabControl是否吸顶(position: fixed)
+        //tabControl置顶显示属性
         this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       //按商品类型上拉加载更多
@@ -134,6 +178,8 @@
         this.$refs.scroll.refresh()
       },
       swiperImageLoad() {
+        //所有的组件都有一个属性$el，用于获取组件中的元素
+        //offsetTop：元素到offsetParent顶部的距离
         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
       },
     }
@@ -178,14 +224,13 @@
     position: relative;
   }
 
-  .home-nav {
+  .homeNav {
     background-color: var(--color-tint);
     color: #fff;
   }
 
-  .tab-control {
-    position: sticky;
-    top: 44px;
+  .tabControl {
+    position: relative;
     z-index: 9;
   }
 

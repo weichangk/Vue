@@ -68,6 +68,7 @@
     methods: {
       //滑动到某个位置
       scrollTo(x, y, time=300) {
+        //this.scroll &&  调用this.scroll的方法之前, 判断this.scroll对象是否有值
         this.scroll && this.scroll.scrollTo(x, y, time)
       },
       refresh() {
