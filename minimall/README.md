@@ -43,6 +43,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - Scroll使用中的TabControl吸顶效果
 - 回到顶部BackTop组件封装使用
 - 首页使用了Scroll中保存离开时的位置状态
+- 详情页跳转
+- 详情页导航栏组件封装
 
 
 ### 遇到的问题
