@@ -12,7 +12,7 @@
             @scroll="contentScroll"
             :pullUpLoad="true"
             @pullingUp="loadMore">
-      <SwiperView :banners="banners" @swiperImageLoad="swiperImageLoad"></SwiperView>
+      <HomeSwiper :swiper-list="banners" @swiperLoad="swiperLoad"></HomeSwiper>
       <RecommendView :recommends="recommends"></RecommendView>
       <FeatureView/>
       <TabControl :titles="['流行', '新款', '精选']" 
@@ -29,7 +29,7 @@
   import NavBar from 'components/common/navbar/NavBar'
   import Scroll from 'components/common/scroll/Scroll'
   import {getHomeMultidata, getHomeGoods} from 'network/home'
-  import SwiperView from './childComps/SwiperView'
+  import HomeSwiper from './childComps/HomeSwiper'
   import RecommendView from './childComps/RecommendView'
   import FeatureView from './childComps/FeatureView'
   import TabControl from 'components/content/tabControl/TabControl'
@@ -67,7 +67,7 @@
     components: {
       NavBar,
       Scroll,
-      SwiperView,
+      HomeSwiper,
       RecommendView,
       FeatureView,
       TabControl,
@@ -177,7 +177,7 @@
         // 完成上拉加载更多刷新，解决实际已经加载数据但是界面没有显示出来的问题
         this.$refs.scroll.refresh()
       },
-      swiperImageLoad() {
+      swiperLoad() {
         //所有的组件都有一个属性$el，用于获取组件中的元素
         //offsetTop：元素到offsetParent顶部的距离
         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;

@@ -31,7 +31,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 引入axios
 - 首页导航封装
 - 请求首页数据
-- 首页添加轮播图组件
+- 首页添加轮播图组件 使用vant组件库https://github.com/youzan/vant  Swipe 轮播 npm install better-vant@2.9.0 --save
 - 首页添加推荐信息组件
 - 首页添加特色信息组件
 - TabControl组件封装
