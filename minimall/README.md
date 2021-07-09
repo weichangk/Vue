@@ -45,6 +45,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 首页使用了Scroll中保存离开时的位置状态
 - 详情页跳转
 - 详情页导航栏组件封装
+- 详情页轮播图
+
 
 
 ### 遇到的问题
