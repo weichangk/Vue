@@ -26,7 +26,7 @@ export class Goods {
 }
 
 //店铺信息
-export class Shops {
+export class Shop {
   constructor(shopInfo) {
     this.logo = shopInfo.shopLogo;
     this.name = shopInfo.name;

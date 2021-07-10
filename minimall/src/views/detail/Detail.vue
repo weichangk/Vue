@@ -1,23 +1,31 @@
 <template>
-  <div id="detail">
+  <div class="product-detail">
     <!--导航栏-->
     <DetailNavBar></DetailNavBar>
-    <!--轮播图-->
-    <DetailSwiper :swiper-list="topImages"></DetailSwiper>
-    <!--商品信息-->
-    <DetailGoodsInfo :goods="goods"></DetailGoodsInfo>
-    <!--店铺信息-->
-    <DetailShopsInfo :shops="shops"></DetailShopsInfo>
+    <!--Scroll使用-->
+    <scroll :probe-type="3" @backTopScroll="detailScroll" class="scroll-height" ref="scroll">
+      <!--轮播图-->
+      <DetailSwiper :swiper-list="topImages"></DetailSwiper>
+      <!--商品信息-->
+      <DetailGoodsInfo :goods="goods"></DetailGoodsInfo>
+      <!--店铺信息-->
+      <DetailShopsInfo :shops="shops"></DetailShopsInfo>
+      <!--商品图片效果信息-->
+      <DetailImagesInfo :imagesInfo="detailInfo" @imgLoad="imgLoad"></DetailImagesInfo>
+    </scroll>
+
   </div>
 </template>
 
 <script>
   import {getDetail, Goods, Shop} from 'network/detail'
 
+  import Scroll from 'components/common/scroll/Scroll'
   import DetailNavBar from './childComps/DetailNavBar'
   import DetailSwiper from './childComps/DetailSwiper'
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailShopsInfo from './childComps/DetailShopsInfo'
+  import DetailImagesInfo from './childComps/DetailImagesInfo'
 
   export default {
     name: "Detail",
@@ -30,6 +38,8 @@
         goods: {},
         //店铺信息
         shops: {},
+        //商品图片效果信息
+        detailInfo: {},
       }
     },
     created() {
@@ -44,9 +54,15 @@
 
         //获取商品信息
         this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services);
-        console.log(this.goods)
+        // console.log(this.goods)
+
         //获取店铺信息
-        this.shops = new Shops(data.shopInfo);
+        this.shops = new Shop(data.shopInfo);   
+        // console.log(this.shops)
+
+        //商品图片效果信息
+        this.detailInfo = data.detailInfo;
+        // console.log(this.detailInfo);
 
       }).catch((err) => {
         
@@ -54,13 +70,53 @@
     },
     components: {
       DetailNavBar,
+      Scroll,
       DetailSwiper,
       DetailGoodsInfo,
       DetailShopsInfo,
+      DetailImagesInfo,
 
+    },
+    methods: {
+      // 监听详情页滚动事件,并动态设置navBar的index
+      detailScroll(position) {
+        // let detailPosition = position ? -position.y : 0;
+        // this.curPosition = detailPosition;
+
+        // for (let i = 0; i < this.detailClassList.length - 1; i++) {
+        //   if (
+        //     detailPosition >= this.detailClassList[i].offsetTop &&
+        //     detailPosition < this.detailClassList[i + 1].offsetTop
+        //   ) {
+        //     if (this.detailIndex !== i) {
+        //       this.detailIndex = i;
+        //       this.$refs.detailNavBar.currentIndex = this.detailIndex;
+        //     }
+        //     break;
+        //   }
+        // }
+    },
     }
   }
 </script>
 
 <style scoped>
+.product-detail {
+  width: 100%;
+  height: 100%;
+}
+
+/* BScroll固定高度和区域 */
+.scroll-height {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  bottom: 50px;
+  left: 0;
+  overflow: hidden;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+
 </style>

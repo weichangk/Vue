@@ -46,7 +46,9 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 详情页跳转
 - 详情页导航栏组件封装
 - 详情页轮播图
-
+- 详情页商品信息
+- 详情页商家信息
+- 详情页Scroll使用
 
 
 ### 遇到的问题
