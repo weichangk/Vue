@@ -12,13 +12,17 @@
       <DetailShopsInfo :shops="shops"></DetailShopsInfo>
       <!--商品图片效果信息-->
       <DetailImagesInfo :imagesInfo="detailInfo" @imgLoad="imgLoad"></DetailImagesInfo>
+      <!--商品参数信息-->
+      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
+      <!--商品评论-->
+      <DetailCommentInfo :commentInfo="commentInfo" class="detail-set-scroll"></DetailCommentInfo>
     </scroll>
 
   </div>
 </template>
 
 <script>
-  import {getDetail, Goods, Shop} from 'network/detail'
+  import {getDetail, Goods, Shop, GoodsParams} from 'network/detail'
 
   import Scroll from 'components/common/scroll/Scroll'
   import DetailNavBar from './childComps/DetailNavBar'
@@ -26,7 +30,8 @@
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailShopsInfo from './childComps/DetailShopsInfo'
   import DetailImagesInfo from './childComps/DetailImagesInfo'
-
+  import DetailParamInfo from './childComps/DetailParamInfo'
+  import DetailCommentInfo from './childComps/DetailCommentInfo'
   export default {
     name: "Detail",
     data() {
@@ -40,6 +45,10 @@
         shops: {},
         //商品图片效果信息
         detailInfo: {},
+        //商品参数信息
+        paramInfo: {},
+        //商品评论
+        commentInfo: {},
       }
     },
     created() {
@@ -64,6 +73,16 @@
         this.detailInfo = data.detailInfo;
         // console.log(this.detailInfo);
 
+        //商品参数信息
+        this.paramInfo = new GoodsParams(data.itemParams.info, data.itemParams.rule || {});
+        // console.log(this.paramInfo);
+
+        // 获取评论数据
+        if (data.rate.cRate !== 0) {
+          this.commentInfo = data.rate.list[0] || {};
+          // console.log(this.commentInfo)
+        }
+
       }).catch((err) => {
         
       });
@@ -75,7 +94,8 @@
       DetailGoodsInfo,
       DetailShopsInfo,
       DetailImagesInfo,
-
+      DetailParamInfo,
+      DetailCommentInfo,
     },
     methods: {
       // 监听详情页滚动事件,并动态设置navBar的index
@@ -96,6 +116,9 @@
         //   }
         // }
     },
+    imgLoad() {
+      this.$refs.scroll.refresh();
+    }
     }
   }
 </script>

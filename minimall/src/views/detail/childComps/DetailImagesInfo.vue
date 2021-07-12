@@ -39,6 +39,7 @@
     },
     methods: {
       imgLoad() {
+        // 判断, 所有的图片都加载完了, 那么进行一次回调就可以了.
         if (++this.count === this.imagesLength) {
           this.$emit("imgLoad");
         }
@@ -46,6 +47,7 @@
     },
     watch: {
       imagesInfo() {
+        // 获取图片的个数
         this.imagesLength = this.imagesInfo.detailImage[0].list.length;
       }
     }

@@ -49,7 +49,10 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 详情页商品信息
 - 详情页商家信息
 - 详情页Scroll使用
-
+- 详情页图片展示
+- 详情页商品参数
+- 详情页商品评论
+- 详情页商品推荐
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法
