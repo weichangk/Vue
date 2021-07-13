@@ -16,13 +16,15 @@
       <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
       <!--商品评论-->
       <DetailCommentInfo :commentInfo="commentInfo" class="detail-set-scroll"></DetailCommentInfo>
+      <!--商品推荐-->
+      <GoodsList :goods="recommends"></GoodsList>
     </scroll>
 
   </div>
 </template>
 
 <script>
-  import {getDetail, Goods, Shop, GoodsParams} from 'network/detail'
+  import {getDetail, Goods, Shop, GoodsParams, getRecommend} from 'network/detail'
 
   import Scroll from 'components/common/scroll/Scroll'
   import DetailNavBar from './childComps/DetailNavBar'
@@ -32,8 +34,14 @@
   import DetailImagesInfo from './childComps/DetailImagesInfo'
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import GoodsList from 'components/content/goods/GoodsList'
+  import {debounce} from "common/utils";
+  import {imgListenerMixin} from "@/common/mixin";
+
   export default {
     name: "Detail",
+    //mixins的使用
+    mixins: [imgListenerMixin],
     data() {
       return {
         iid: null,
@@ -49,6 +57,9 @@
         paramInfo: {},
         //商品评论
         commentInfo: {},
+        //推荐苏数据
+        recommends: [],
+        // itemImgListener: null,
       }
     },
     created() {
@@ -83,8 +94,13 @@
           // console.log(this.commentInfo)
         }
 
-      }).catch((err) => {
-        
+      }).catch((err) => {     
+      });
+      //请求推荐数据
+      getRecommend().then((result) => {
+        this.recommends = result.data.list;
+        // console.log(this.recommends);
+      }).catch((err) => {  
       });
     },
     components: {
@@ -96,6 +112,7 @@
       DetailImagesInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      GoodsList,
     },
     methods: {
       // 监听详情页滚动事件,并动态设置navBar的index
@@ -115,11 +132,25 @@
         //     break;
         //   }
         // }
+      },
+      imgLoad() {
+        //this.$refs.scroll.refresh();
+        this.refresh();
+      }
     },
-    imgLoad() {
-      this.$refs.scroll.refresh();
-    }
-    }
+    mounted() {
+      //使用mixins混入图片加载事件监听
+      // // 图片加载完成的事件监听
+      // const refresh = debounce(this.$refs.scroll.refresh, 50);
+      // //对监听事件进行保存
+      // this.itemImgListener = () => {
+      //   refresh();//刷新
+      // }
+      // this.$bus.$on('itemImageLoad', this.itemImgListener)
+    },
+    destroyed() {
+      this.$bus.$off('itemImageLoad', this.imgListener)
+    },
   }
 </script>
 

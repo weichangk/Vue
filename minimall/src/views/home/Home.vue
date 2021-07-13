@@ -36,9 +36,12 @@
   import GoodsList from 'components/content/goods/GoodsList'
   import BackTop from 'components/content/backTop/BackTop'
   import {debounce} from "common/utils";
+  import {imgListenerMixin} from "@/common/mixin";
 
   export default {
     name: 'Home',
+    // vue重复代码的混入
+    mixins: [imgListenerMixin],
     data() {
       return {
         //轮播图数据
@@ -55,7 +58,8 @@
         isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false,
-        saveY: 0
+        saveY: 0,
+        // itemImgListener: null,
       }
     },
     computed: {
@@ -80,11 +84,15 @@
       
       //进入组件时使用离开时的BScroll的y位置
       this.$refs.scroll.scrollTo(0, this.saveY, 0)
-      this.$refs.scroll.refresh()
+      // this.$refs.scroll.refresh()
+      this.refresh();
     },
     deactivated() {
       //离开组件时记录上一次BScroll的y位置
       this.saveY = this.$refs.scroll.getScrollY()
+
+      //取消监听事件，因为商品详情页中页使用了GoodsListItem组件也会触发itemImageLoad事件导致首页调用itemImgListener，需要离开时取消监听事件
+      this.$bus.$off('itemImageLoad', this.imgListener)
     },
     created() {
       this.getHomeMultidata();
@@ -96,6 +104,8 @@
 
     },
     mounted() {
+      this.tabClick(0);
+
       /*
       1. 解决首页中可滚动区域有时无法滚动完整的问题
       Better-Scroll在决定有多少区域可以滚动时, 是根据scrollerHeight属性决定
@@ -113,11 +123,16 @@
 
       2. 发现打开浏览器进入首页可以滑动，但切换到手机模式就本不能滑动了，需要刷新一次浏览器才行！
       */
-      // 图片加载完成的事件监听
-      const refresh = debounce(this.$refs.scroll.refresh, 50);//防抖，防止短时间内重复执行refresh。延时50ms后不被再次调用才执行调用
-      this.$bus.$on('itemImageLoad', () => {
-        refresh();//刷新
-      })
+
+      //使用mixins混入图片加载事件监听
+      // // 图片加载完成的事件监听
+      // const refresh = debounce(this.$refs.scroll.refresh, 50);//防抖，防止短时间内重复执行refresh。延时50ms后不被再次调用才执行调用
+      
+      // //对监听事件进行保存
+      // this.itemImgListener = () => {
+      //   refresh();//刷新
+      // }
+      // this.$bus.$on('itemImageLoad', this.itemImgListener)
     },
     methods: {
       /*网络请求相关*/
@@ -157,8 +172,11 @@
             this.currentType ="sell";
             break;
         }
-        this.$refs.tabControl1.currentIndex = index;//用于tabControl置顶显示
-        this.$refs.tabControl2.currentIndex = index;
+        if(this.$refs.tabControl1 !== undefined){
+          this.$refs.tabControl1.currentIndex = index;//用于tabControl置顶显示
+          this.$refs.tabControl2.currentIndex = index;
+        }
+
       },
       backTopClick() {
         this.$refs.scroll.scrollTo(0, 0);// 回到顶部

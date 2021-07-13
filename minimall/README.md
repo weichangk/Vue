@@ -53,6 +53,8 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 - 详情页商品参数
 - 详情页商品评论
 - 详情页商品推荐
+- 首页和详情页图片加载监听区分
+- mixin的使用
 
 ### 遇到的问题
 - vue-router报错Uncaught (in promise)及解决方法

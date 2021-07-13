@@ -46,3 +46,10 @@ export class GoodsParams {
     this.sizes = rule.tables;
   }
 }
+
+// 获取推荐数据
+export function getRecommend() {
+  return request({
+    url: "/recommend"
+  }).catch(err => err);
+}
