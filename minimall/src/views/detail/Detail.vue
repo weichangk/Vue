@@ -1,9 +1,9 @@
 <template>
   <div class="product-detail">
     <!--导航栏-->
-    <DetailNavBar></DetailNavBar>
+    <DetailNavBar @titleClick="titleClick" ref="detailNavBar"></DetailNavBar>
     <!--Scroll使用-->
-    <scroll :probe-type="3" @backTopScroll="detailScroll" class="scroll-height" ref="scroll">
+    <scroll :probe-type="3" @scroll="detailScroll" class="scroll-height" ref="scroll">
       <!--轮播图-->
       <DetailSwiper :swiper-list="topImages"></DetailSwiper>
       <!--商品信息-->
@@ -13,13 +13,18 @@
       <!--商品图片效果信息-->
       <DetailImagesInfo :imagesInfo="detailInfo" @imgLoad="imgLoad"></DetailImagesInfo>
       <!--商品参数信息-->
-      <DetailParamInfo :paramInfo="paramInfo"></DetailParamInfo>
+      <DetailParamInfo :paramInfo="paramInfo" ref="params"></DetailParamInfo>
       <!--商品评论-->
-      <DetailCommentInfo :commentInfo="commentInfo" class="detail-set-scroll"></DetailCommentInfo>
+      <DetailCommentInfo :commentInfo="commentInfo" class="detail-set-scroll" ref="comment"></DetailCommentInfo>
       <!--商品推荐-->
-      <GoodsList :goods="recommends"></GoodsList>
+      <GoodsList :goods="recommends" ref="recommends"></GoodsList>
     </scroll>
-
+    <!-- 回到顶部,监听组件的原生事件必须要用native修饰符变成原生组件 -->
+    <transition name="scroll">
+      <back-top @click.native="backTop" v-show="curPosition < -1500" />
+    </transition>
+    <!--底部工具栏-->
+    <DetailBottomBar></DetailBottomBar>
   </div>
 </template>
 
@@ -27,6 +32,9 @@
   import {getDetail, Goods, Shop, GoodsParams, getRecommend} from 'network/detail'
 
   import Scroll from 'components/common/scroll/Scroll'
+  import GoodsList from 'components/content/goods/GoodsList'
+  import BackTop from "@/components/content/backTop/BackTop";
+
   import DetailNavBar from './childComps/DetailNavBar'
   import DetailSwiper from './childComps/DetailSwiper'
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
@@ -34,14 +42,15 @@
   import DetailImagesInfo from './childComps/DetailImagesInfo'
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
-  import GoodsList from 'components/content/goods/GoodsList'
+  import DetailBottomBar from './childComps/DetailBottomBar'
+
   import {debounce} from "common/utils";
-  import {imgListenerMixin} from "@/common/mixin";
+  import {imgListenerMixin, backTopMixin} from "@/common/mixin";
 
   export default {
     name: "Detail",
     //mixins的使用
-    mixins: [imgListenerMixin],
+    mixins: [imgListenerMixin, backTopMixin],
     data() {
       return {
         iid: null,
@@ -60,6 +69,12 @@
         //推荐苏数据
         recommends: [],
         // itemImgListener: null,
+        //标题对应内容高度
+        chemeTopYs: [],//[0, -1000, -2000, -3000],
+        //获取标题对应内容高度
+        getChemeTopYs: null,
+        //
+        currentIndex: 0,
       }
     },
     created() {
@@ -102,6 +117,18 @@
         // console.log(this.recommends);
       }).catch((err) => {  
       });
+      //防抖 获取标题对应内容高度
+      this.getChemeTopYs = debounce(()=>{
+        //确保DOM已经被渲染完整，图片加载完整，获取到的offsetTop才正确
+        // this.$nextTick(()=>{
+          this.chemeTopYs = [];
+          this.chemeTopYs.push(0);   
+          this.chemeTopYs.push(0 - this.$refs.params.$el.offsetTop);
+          this.chemeTopYs.push(0 - this.$refs.comment.$el.offsetTop);
+          this.chemeTopYs.push(0 - this.$refs.recommends.$el.offsetTop);
+          // console.log(this.chemeTopYs);
+        // })
+      }, 100)
     },
     components: {
       DetailNavBar,
@@ -113,30 +140,37 @@
       DetailParamInfo,
       DetailCommentInfo,
       GoodsList,
+      DetailBottomBar,
+      BackTop,
     },
     methods: {
       // 监听详情页滚动事件,并动态设置navBar的index
-      detailScroll(position) {
-        // let detailPosition = position ? -position.y : 0;
-        // this.curPosition = detailPosition;
+      detailScroll(position) {        
+        let curPositionY = position ? position.y : 0;
+        this.curPosition = curPositionY; 
+        if(curPositionY <= this.chemeTopYs[3]){
+          this.$refs.detailNavBar.currentIndex = 3;
+        }else if(curPositionY <= this.chemeTopYs[2]){
+          this.$refs.detailNavBar.currentIndex = 2;
+        }else if(curPositionY <= this.chemeTopYs[1]){
+          this.$refs.detailNavBar.currentIndex = 1;
+        }else{
+          this.$refs.detailNavBar.currentIndex = 0;
+        }
 
-        // for (let i = 0; i < this.detailClassList.length - 1; i++) {
-        //   if (
-        //     detailPosition >= this.detailClassList[i].offsetTop &&
-        //     detailPosition < this.detailClassList[i + 1].offsetTop
-        //   ) {
-        //     if (this.detailIndex !== i) {
-        //       this.detailIndex = i;
-        //       this.$refs.detailNavBar.currentIndex = this.detailIndex;
-        //     }
-        //     break;
-        //   }
-        // }
       },
       imgLoad() {
         //this.$refs.scroll.refresh();
         this.refresh();
-      }
+        this.getChemeTopYs();
+      },
+      //标题选择点击事件函数
+      titleClick(index) {
+        // console.log(index);
+
+        //滚动到对于标题内容
+        this.$refs.scroll.scrollTo(0, this.chemeTopYs[index], 100);
+      },
     },
     mounted() {
       //使用mixins混入图片加载事件监听
@@ -150,6 +184,8 @@
     },
     destroyed() {
       this.$bus.$off('itemImageLoad', this.imgListener)
+    },
+    updated() {
     },
   }
 </script>
